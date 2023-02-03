@@ -1,0 +1,11 @@
+{
+  "postgres": {
+    "host": "localhost",
+    "post": "5432",
+    "DBName": "it-planeta",
+    "SSLMode": "disable"
+  },
+  "server": {
+    "port": "6733"
+  }
+}
