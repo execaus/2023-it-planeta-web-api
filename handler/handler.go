@@ -15,6 +15,17 @@ func NewHandler(services *service.Service) *Handler {
 
 func (h *Handler) InitRoutes() *gin.Engine {
 	router := gin.Default()
+	{
+		router.POST("/registration", notAuthMiddleware, h.registrationAccount)
+	}
 
 	return router
+}
+
+func requiredAuthMiddleware(c *gin.Context) {
+
+}
+
+func notAuthMiddleware(c *gin.Context) {
+
 }

@@ -1,5 +1,5 @@
 sqlc:
-	generate sqlc
+	sqlc generate
 
 docker_postgres_build:
 	docker build \
