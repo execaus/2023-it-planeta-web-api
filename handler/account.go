@@ -76,3 +76,29 @@ func (h *Handler) getAccount(c *gin.Context) {
 	}
 	h.sendOKWithBody(c, output)
 }
+
+func (h *Handler) getAccounts(c *gin.Context) {
+	var input models.GetAccountsInput
+	if err := c.ShouldBindQuery(&input); err != nil {
+		h.sendBadRequest(c, err.Error())
+		return
+	}
+
+	if input.From != nil && *input.From < 0 {
+		h.sendBadRequest(c, "invalid parameter from")
+		return
+	}
+
+	if input.Size != nil && *input.Size <= 0 {
+		h.sendBadRequest(c, "invalid parameter size")
+		return
+	}
+
+	accounts, err := h.services.Account.GetList(&input)
+	if err != nil {
+		h.sendInternalServerError(c)
+		return
+	}
+
+	h.sendOKWithBody(c, accounts)
+}

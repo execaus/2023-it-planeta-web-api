@@ -11,6 +11,7 @@ type Account interface {
 	IsExistById(id int) (bool, error)
 	Registration(input *models.RegistrationAccountInput) (*models.RegistrationAccountOutput, error)
 	Get(id int) (*queries.Account, error)
+	GetList(input *models.GetAccountsInput) ([]*models.GetAccountsOutput, error)
 }
 
 type Service struct {

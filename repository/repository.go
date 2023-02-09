@@ -10,6 +10,7 @@ type Account interface {
 	IsExistById(id int64) (bool, error)
 	Registration(input *models.RegistrationAccountInput) (*queries.Account, error)
 	Get(id int64) (*queries.Account, error)
+	GetList(params *queries.GetAccountsParams) ([]queries.Account, error)
 }
 
 type Repository struct {

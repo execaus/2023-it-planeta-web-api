@@ -11,6 +11,16 @@ type AccountPostgres struct {
 	db *queries.Queries
 }
 
+func (r *AccountPostgres) GetList(params *queries.GetAccountsParams) ([]queries.Account, error) {
+	accounts, err := r.db.GetAccounts(context.Background(), *params)
+	if err != nil {
+		logrus.Error(err.Error())
+		return nil, err
+	}
+
+	return accounts, nil
+}
+
 func (r *AccountPostgres) Get(id int64) (*queries.Account, error) {
 	account, err := r.db.GetAccount(context.Background(), id)
 	if err != nil {

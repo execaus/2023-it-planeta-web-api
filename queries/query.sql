@@ -17,3 +17,12 @@ SELECT EXISTS (
 
 -- name: GetAccount :one
 SELECT * FROM "Account" WHERE id=$1;
+
+-- name: GetAccounts :many
+SELECT *
+FROM "Account"
+WHERE (first_name IS NULL OR lower(first_name) LIKE lower('%' || $1 || '%'))
+AND (last_name IS NULL OR lower(last_name) LIKE lower('%' || $2 || '%'))
+AND (email IS NULL OR lower(email) LIKE lower('%' || $3 || '%'))
+ORDER BY id DESC
+LIMIT $4 OFFSET $5;

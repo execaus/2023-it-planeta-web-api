@@ -7,6 +7,7 @@ package queries
 
 import (
 	"context"
+	"database/sql"
 )
 
 const createAccount = `-- name: CreateAccount :one
@@ -53,6 +54,59 @@ func (q *Queries) GetAccount(ctx context.Context, id int64) (Account, error) {
 		&i.Password,
 	)
 	return i, err
+}
+
+const getAccounts = `-- name: GetAccounts :many
+SELECT id, first_name, last_name, email, password
+FROM "Account"
+WHERE (first_name IS NULL OR lower(first_name) LIKE lower('%' || $1 || '%'))
+AND (last_name IS NULL OR lower(last_name) LIKE lower('%' || $2 || '%'))
+AND (email IS NULL OR lower(email) LIKE lower('%' || $3 || '%'))
+ORDER BY id DESC
+LIMIT $4 OFFSET $5
+`
+
+type GetAccountsParams struct {
+	Column1 sql.NullString
+	Column2 sql.NullString
+	Column3 sql.NullString
+	Limit   int32
+	Offset  int32
+}
+
+func (q *Queries) GetAccounts(ctx context.Context, arg GetAccountsParams) ([]Account, error) {
+	rows, err := q.db.QueryContext(ctx, getAccounts,
+		arg.Column1,
+		arg.Column2,
+		arg.Column3,
+		arg.Limit,
+		arg.Offset,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Account
+	for rows.Next() {
+		var i Account
+		if err := rows.Scan(
+			&i.ID,
+			&i.FirstName,
+			&i.LastName,
+			&i.Email,
+			&i.Password,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const isExistAccountByEmail = `-- name: IsExistAccountByEmail :one
