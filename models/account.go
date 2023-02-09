@@ -8,14 +8,14 @@ type RegistrationAccountInput struct {
 }
 
 type RegistrationAccountOutput struct {
-	Id        int32  `json:"id,omitempty"`
+	Id        int64  `json:"id,omitempty"`
 	FirstName string `json:"firstName,omitempty"`
 	LastName  string `json:"lastName,omitempty"`
 	Email     string `json:"email,omitempty"`
 }
 
 type GetAccountOutput struct {
-	Id        int32  `json:"id,omitempty"`
+	Id        int64  `json:"id,omitempty"`
 	FirstName string `json:"firstName,omitempty"`
 	LastName  string `json:"lastName,omitempty"`
 	Email     string `json:"email,omitempty"`

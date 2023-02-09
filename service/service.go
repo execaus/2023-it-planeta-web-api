@@ -7,7 +7,8 @@ import (
 )
 
 type Account interface {
-	IsExist(email string) (bool, error)
+	IsExistByEmail(email string) (bool, error)
+	IsExistById(id int) (bool, error)
 	Registration(input *models.RegistrationAccountInput) (*models.RegistrationAccountOutput, error)
 	Get(id int) (*queries.Account, error)
 }

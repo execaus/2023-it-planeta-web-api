@@ -4,12 +4,59 @@
 
 package queries
 
-import ()
+import (
+	"database/sql"
+	"time"
+)
 
 type Account struct {
-	ID        int32
+	ID        int64
 	FirstName string
 	LastName  string
 	Email     string
 	Password  string
+}
+
+type Animal struct {
+	ID               int64
+	ChippingLocation int64
+	Weight           float64
+	Length           float64
+	Height           float64
+	Gender           string
+	LifeStatus       string
+	ChippingDate     time.Time
+	Chipper          int64
+	DeathDate        sql.NullTime
+}
+
+type AnimalGender struct {
+	Value string
+}
+
+type AnimalLifeStatus struct {
+	Value string
+}
+
+type AnimalToType struct {
+	ID     int64
+	Animal int64
+	Type   string
+}
+
+type AnimalType struct {
+	Value string
+}
+
+type AnimalVisitedLocation struct {
+	ID       int64
+	Location int64
+	Animal   int64
+	Date     time.Time
+}
+
+type LocationPoint struct {
+	ID        int64
+	Latitude  float64
+	Longitude float64
 }

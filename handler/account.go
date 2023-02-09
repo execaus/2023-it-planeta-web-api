@@ -14,7 +14,7 @@ func (h *Handler) registrationAccount(c *gin.Context) {
 		return
 	}
 
-	isAccountExist, err := h.services.Account.IsExist(input.Email)
+	isAccountExist, err := h.services.Account.IsExistByEmail(input.Email)
 	if err != nil {
 		h.sendInternalServerError(c)
 		return
@@ -34,7 +34,7 @@ func (h *Handler) registrationAccount(c *gin.Context) {
 }
 
 func (h *Handler) getAccount(c *gin.Context) {
-	stringId := c.Param("id")
+	stringId := c.Param("accountId")
 	if stringId == "" || stringId == "null" {
 		h.sendBadRequest(c, "id is not valid")
 		return
@@ -51,14 +51,20 @@ func (h *Handler) getAccount(c *gin.Context) {
 		return
 	}
 
-	account, err := h.services.Account.Get(id)
+	isExist, err := h.services.Account.IsExistById(id)
 	if err != nil {
 		h.sendInternalServerError(c)
 		return
 	}
 
-	if account == nil {
+	if !isExist {
 		h.sendNotFound(c)
+		return
+	}
+
+	account, err := h.services.Account.Get(id)
+	if err != nil {
+		h.sendInternalServerError(c)
 		return
 	}
 

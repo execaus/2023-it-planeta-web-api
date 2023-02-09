@@ -11,12 +11,17 @@ type AccountService struct {
 }
 
 func (s *AccountService) Get(id int) (*queries.Account, error) {
-	idNumber32 := int32(id)
-	return s.repo.Get(idNumber32)
+	idNumber64 := int64(id)
+	return s.repo.Get(idNumber64)
 }
 
-func (s *AccountService) IsExist(email string) (bool, error) {
-	return s.repo.IsExist(email)
+func (s *AccountService) IsExistByEmail(email string) (bool, error) {
+	return s.repo.IsExistByEmail(email)
+}
+
+func (s *AccountService) IsExistById(id int) (bool, error) {
+	idNumber64 := int64(id)
+	return s.repo.IsExistById(idNumber64)
 }
 
 func (s *AccountService) Registration(input *models.RegistrationAccountInput) (*models.RegistrationAccountOutput, error) {

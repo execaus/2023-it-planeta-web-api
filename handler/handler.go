@@ -21,7 +21,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 
 	accounts := router.Group("/accounts", requiredAuthMiddleware)
 	{
-		accounts.GET("/:id", h.getAccount)
+		accounts.GET("/:accountId", h.getAccount)
 	}
 
 	return router

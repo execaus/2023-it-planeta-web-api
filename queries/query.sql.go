@@ -42,7 +42,7 @@ const getAccount = `-- name: GetAccount :one
 SELECT id, first_name, last_name, email, password FROM "Account" WHERE id=$1
 `
 
-func (q *Queries) GetAccount(ctx context.Context, id int32) (Account, error) {
+func (q *Queries) GetAccount(ctx context.Context, id int64) (Account, error) {
 	row := q.db.QueryRowContext(ctx, getAccount, id)
 	var i Account
 	err := row.Scan(
@@ -55,7 +55,7 @@ func (q *Queries) GetAccount(ctx context.Context, id int32) (Account, error) {
 	return i, err
 }
 
-const isExistAccount = `-- name: IsExistAccount :one
+const isExistAccountByEmail = `-- name: IsExistAccountByEmail :one
 SELECT EXISTS (
   SELECT 1
   FROM "Account"
@@ -63,8 +63,23 @@ SELECT EXISTS (
 )
 `
 
-func (q *Queries) IsExistAccount(ctx context.Context, email string) (bool, error) {
-	row := q.db.QueryRowContext(ctx, isExistAccount, email)
+func (q *Queries) IsExistAccountByEmail(ctx context.Context, email string) (bool, error) {
+	row := q.db.QueryRowContext(ctx, isExistAccountByEmail, email)
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
+}
+
+const isExistAccountById = `-- name: IsExistAccountById :one
+SELECT EXISTS (
+  SELECT 1
+  FROM "Account"
+  WHERE id = $1
+)
+`
+
+func (q *Queries) IsExistAccountById(ctx context.Context, id int64) (bool, error) {
+	row := q.db.QueryRowContext(ctx, isExistAccountById, id)
 	var exists bool
 	err := row.Scan(&exists)
 	return exists, err
