@@ -6,7 +6,7 @@ services:
     volumes:
       - /var/lib/postgresql/data/
     environment:
-      - POSTGRES_DB=it_planeta
+      - POSTGRES_DB=2023_it_planeta
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=1234
   # Сервис для разворачивания контейнера с приложением

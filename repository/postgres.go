@@ -6,11 +6,11 @@ import (
 	"2023-it-planeta-web-api/queries"
 	"database/sql"
 	"fmt"
-	_ "github.com/jackc/pgx/stdlib"
+	_ "github.com/lib/pq"
 	"github.com/sirupsen/logrus"
 )
 
-const dbDriverName = "pgx"
+const dbDriverName = "postgres"
 
 func NewBusinessDatabase(env *models.Environment, config *configs.Config) *queries.Queries {
 	conn := getConnectDatabase(env, config)
@@ -28,6 +28,9 @@ func getConnectDatabase(env *models.Environment, config *configs.Config) *sql.DB
 		config.Postgres.SSLMode)
 	db, err := sql.Open(dbDriverName, connString)
 	if err != nil {
+		logrus.Fatalf(`database open connect: %s`, err.Error())
+	}
+	if err = db.Ping(); err != nil {
 		logrus.Fatalf(`database open connect: %s`, err.Error())
 	}
 	return db

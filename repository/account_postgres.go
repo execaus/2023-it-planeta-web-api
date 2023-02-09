@@ -11,6 +11,16 @@ type AccountPostgres struct {
 	db *queries.Queries
 }
 
+func (r *AccountPostgres) Get(id int32) (*queries.Account, error) {
+	account, err := r.db.GetAccount(context.Background(), id)
+	if err != nil {
+		logrus.Error(err.Error())
+		return nil, err
+	}
+
+	return &account, nil
+}
+
 func (r *AccountPostgres) IsExist(email string) (bool, error) {
 	isExist, err := r.db.IsExistAccount(context.Background(), email)
 	if err != nil {

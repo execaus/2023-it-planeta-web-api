@@ -2,11 +2,17 @@ package service
 
 import (
 	"2023-it-planeta-web-api/models"
+	"2023-it-planeta-web-api/queries"
 	"2023-it-planeta-web-api/repository"
 )
 
 type AccountService struct {
 	repo repository.Account
+}
+
+func (s *AccountService) Get(id int) (*queries.Account, error) {
+	idNumber32 := int32(id)
+	return s.repo.Get(idNumber32)
 }
 
 func (s *AccountService) IsExist(email string) (bool, error) {

@@ -8,18 +8,18 @@ import (
 
 type Environment struct {
 	PostgresUser     string `env:"POSTGRES_USER,required,notEmpty"`
-	PostgresPassword string `env:"POSTGRES_USER,required,notEmpty"`
+	PostgresPassword string `env:"POSTGRES_PASSWORD,required,notEmpty"`
 }
 
-const envFilePath = ".env"
+const envFilePath = ".env.local"
 
 func LoadEnv() *Environment {
 	environment := Environment{}
 	if err := godotenv.Load(envFilePath); err != nil {
-		logrus.Warning("load file not found, environment variables load from environment")
-		if err := env.Parse(&environment); err != nil {
-			logrus.Fatalf(`environment variables load from environment: %s`, err.Error())
-		}
+		logrus.Warningf("load file not found (%s), environment variables load from environment", err.Error())
+	}
+	if err := env.Parse(&environment); err != nil {
+		logrus.Fatalf(`environment variables load from environment: %s`, err.Error())
 	}
 
 	return &environment

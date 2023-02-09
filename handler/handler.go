@@ -19,6 +19,11 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		router.POST("/registration", notAuthMiddleware, h.registrationAccount)
 	}
 
+	accounts := router.Group("/accounts", requiredAuthMiddleware)
+	{
+		accounts.GET("/:id", h.getAccount)
+	}
+
 	return router
 }
 

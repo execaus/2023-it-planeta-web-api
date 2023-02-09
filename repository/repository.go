@@ -8,6 +8,7 @@ import (
 type Account interface {
 	IsExist(email string) (bool, error)
 	Registration(input *models.RegistrationAccountInput) (*queries.Account, error)
+	Get(id int32) (*queries.Account, error)
 }
 
 type Repository struct {
