@@ -10,6 +10,16 @@ type LocationPostgres struct {
 	db *queries.Queries
 }
 
+func (r *LocationPostgres) Update(params *queries.UpdateLocationParams) (*queries.LocationPoint, error) {
+	location, err := r.db.UpdateLocation(context.Background(), *params)
+	if err != nil {
+		logrus.Error(err.Error())
+		return nil, err
+	}
+
+	return &location, nil
+}
+
 func (r *LocationPostgres) Create(params *queries.CreateLocationParams) (*queries.LocationPoint, error) {
 	location, err := r.db.CreateLocation(context.Background(), *params)
 	if err != nil {

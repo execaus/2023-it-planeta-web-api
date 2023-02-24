@@ -3,24 +3,12 @@ package handler
 import (
 	"2023-it-planeta-web-api/models"
 	"github.com/gin-gonic/gin"
-	"strconv"
 )
 
 func (h *Handler) getAnimal(c *gin.Context) {
-	stringID := c.Param("animalId")
-	if stringID == stringEmpty || stringID == stringNull {
-		h.sendBadRequest(c, "id is not valid")
-		return
-	}
-
-	id, err := strconv.ParseInt(stringID, 10, 64)
+	id, err := getParamID(c, "animalId")
 	if err != nil {
-		h.sendBadRequest(c, "id is not valid")
-		return
-	}
-
-	if id <= 0 {
-		h.sendBadRequest(c, "id is not valid")
+		h.sendBadRequest(c, err.Error())
 		return
 	}
 

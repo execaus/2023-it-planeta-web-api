@@ -3,7 +3,6 @@ package handler
 import (
 	"2023-it-planeta-web-api/models"
 	"github.com/gin-gonic/gin"
-	"strconv"
 )
 
 func (h *Handler) registrationAccount(c *gin.Context) {
@@ -34,20 +33,9 @@ func (h *Handler) registrationAccount(c *gin.Context) {
 }
 
 func (h *Handler) getAccount(c *gin.Context) {
-	stringID := c.Param("accountId")
-	if stringID == stringEmpty || stringID == stringNull {
-		h.sendBadRequest(c, "id is not valid")
-		return
-	}
-
-	id, err := strconv.ParseInt(stringID, 10, 64)
+	id, err := getParamID(c, "accountId")
 	if err != nil {
-		h.sendBadRequest(c, "id is not valid")
-		return
-	}
-
-	if id <= 0 {
-		h.sendBadRequest(c, "id is not valid")
+		h.sendBadRequest(c, err.Error())
 		return
 	}
 
@@ -104,20 +92,9 @@ func (h *Handler) getAccounts(c *gin.Context) {
 }
 
 func (h *Handler) updateAccount(c *gin.Context) {
-	stringID := c.Param("accountId")
-	if stringID == stringEmpty || stringID == stringNull {
-		h.sendBadRequest(c, "id is not valid")
-		return
-	}
-
-	id, err := strconv.ParseInt(stringID, 10, 64)
+	id, err := getParamID(c, "accountId")
 	if err != nil {
-		h.sendBadRequest(c, "id is not valid")
-		return
-	}
-
-	if id <= 0 {
-		h.sendBadRequest(c, "id is not valid")
+		h.sendBadRequest(c, err.Error())
 		return
 	}
 
@@ -167,20 +144,9 @@ func (h *Handler) updateAccount(c *gin.Context) {
 }
 
 func (h *Handler) deleteAccount(c *gin.Context) {
-	stringID := c.Param("accountId")
-	if stringID == stringEmpty || stringID == stringNull {
-		h.sendBadRequest(c, "id is not valid")
-		return
-	}
-
-	id, err := strconv.ParseInt(stringID, 10, 64)
+	id, err := getParamID(c, "accountId")
 	if err != nil {
-		h.sendBadRequest(c, "id is not valid")
-		return
-	}
-
-	if id <= 0 {
-		h.sendBadRequest(c, "id is not valid")
+		h.sendBadRequest(c, err.Error())
 		return
 	}
 

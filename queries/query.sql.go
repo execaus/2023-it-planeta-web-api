@@ -375,3 +375,28 @@ func (q *Queries) UpdateAccount(ctx context.Context, arg UpdateAccountParams) (A
 	)
 	return i, err
 }
+
+const updateLocation = `-- name: UpdateLocation :one
+UPDATE "LocationPoint"
+SET latitude=$1, longitude=$2
+WHERE id=$3
+RETURNING id, latitude, longitude, deleted
+`
+
+type UpdateLocationParams struct {
+	Latitude  float64
+	Longitude float64
+	ID        int64
+}
+
+func (q *Queries) UpdateLocation(ctx context.Context, arg UpdateLocationParams) (LocationPoint, error) {
+	row := q.db.QueryRowContext(ctx, updateLocation, arg.Latitude, arg.Longitude, arg.ID)
+	var i LocationPoint
+	err := row.Scan(
+		&i.ID,
+		&i.Latitude,
+		&i.Longitude,
+		&i.Deleted,
+	)
+	return i, err
+}

@@ -29,6 +29,7 @@ type Location interface {
 	IsExistByID(id int64) (bool, error)
 	IsExistByCoordinates(params *queries.IsExistLocationByCoordinatesParams) (bool, error)
 	Create(params *queries.CreateLocationParams) (*queries.LocationPoint, error)
+	Update(params *queries.UpdateLocationParams) (*queries.LocationPoint, error)
 }
 
 type Repository struct {

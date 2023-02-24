@@ -3,24 +3,12 @@ package handler
 import (
 	"2023-it-planeta-web-api/models"
 	"github.com/gin-gonic/gin"
-	"strconv"
 )
 
 func (h *Handler) getLocation(c *gin.Context) {
-	stringID := c.Param("pointId")
-	if stringID == stringEmpty || stringID == stringNull {
-		h.sendBadRequest(c, "id is not valid")
-		return
-	}
-
-	id, err := strconv.ParseInt(stringID, 10, 64)
+	id, err := getParamID(c, "pointId")
 	if err != nil {
-		h.sendBadRequest(c, "id is not valid")
-		return
-	}
-
-	if id <= 0 {
-		h.sendBadRequest(c, "id is not valid")
+		h.sendBadRequest(c, err.Error())
 		return
 	}
 
@@ -75,6 +63,56 @@ func (h *Handler) createLocation(c *gin.Context) {
 	}
 
 	output := &models.CreateLocationOutput{
+		ID:        location.ID,
+		Latitude:  location.Latitude,
+		Longitude: location.Longitude,
+	}
+
+	h.sendCreatedWithBody(c, &output)
+}
+
+func (h *Handler) updateLocation(c *gin.Context) {
+	id, err := getParamID(c, "pointId")
+	if err != nil {
+		h.sendBadRequest(c, err.Error())
+		return
+	}
+
+	isPointExist, err := h.services.Location.IsExistByID(id)
+	if err != nil {
+		h.sendInternalServerError(c)
+		return
+	}
+
+	if isPointExist {
+		h.sendNotFound(c)
+		return
+	}
+
+	var input models.UpdateLocationInput
+	if err = c.BindJSON(&input); err != nil {
+		h.sendBadRequest(c, err.Error())
+		return
+	}
+
+	isCoordinatesExist, err := h.services.Location.IsExistByCoordinates(input.Latitude, input.Longitude)
+	if err != nil {
+		h.sendInternalServerError(c)
+		return
+	}
+
+	if isCoordinatesExist {
+		h.sendConflict(c)
+		return
+	}
+
+	location, err := h.services.Location.Update(id, input.Latitude, input.Longitude)
+	if err != nil {
+		h.sendInternalServerError(c)
+		return
+	}
+
+	output := &models.UpdateLocationOutput{
 		ID:        location.ID,
 		Latitude:  location.Latitude,
 		Longitude: location.Longitude,

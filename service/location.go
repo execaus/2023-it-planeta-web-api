@@ -9,6 +9,15 @@ type LocationService struct {
 	repo repository.Location
 }
 
+func (s *LocationService) Update(id int64, latitude float64, longitude float64) (*queries.LocationPoint, error) {
+	params := &queries.UpdateLocationParams{
+		ID:        id,
+		Latitude:  latitude,
+		Longitude: longitude,
+	}
+	return s.repo.Update(params)
+}
+
 func (s *LocationService) Create(latitude float64, longitude float64) (*queries.LocationPoint, error) {
 	params := &queries.CreateLocationParams{
 		Latitude:  latitude,

@@ -90,3 +90,9 @@ SELECT EXISTS (
 INSERT INTO "LocationPoint" (latitude, longitude, deleted)
 VALUES ($1, $2, false)
 RETURNING *;
+
+-- name: UpdateLocation :one
+UPDATE "LocationPoint"
+SET latitude=$1, longitude=$2
+WHERE id=$3
+RETURNING *;

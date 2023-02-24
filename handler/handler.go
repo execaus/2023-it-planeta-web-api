@@ -31,6 +31,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	{
 		location.GET("/:pointId", h.getLocation)
 		location.POST("", h.createLocation)
+		location.PUT("/:pointId", h.updateLocation)
 	}
 
 	animals := router.Group("/animals")
