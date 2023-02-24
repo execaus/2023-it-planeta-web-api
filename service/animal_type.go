@@ -9,8 +9,8 @@ type AnimalTypeService struct {
 	repo repository.AnimalType
 }
 
-func (s *AnimalTypeService) GetFromAnimal(id int64) ([]queries.AnimalToType, error) {
-	return s.repo.GetFromAnimal(id)
+func (s *AnimalTypeService) GetByAnimalID(id int64) ([]queries.AnimalToType, error) {
+	return s.repo.GetByAnimalID(id)
 }
 
 func NewAnimalTypeService(repo repository.AnimalType) *AnimalTypeService {

@@ -10,8 +10,8 @@ type AnimalTypePostgres struct {
 	db *queries.Queries
 }
 
-func (r *AnimalTypePostgres) GetFromAnimal(id int64) ([]queries.AnimalToType, error) {
-	types, err := r.db.GetAnimalTypesFromAnimal(context.Background(), id)
+func (r *AnimalTypePostgres) GetByAnimalID(id int64) ([]queries.AnimalToType, error) {
+	types, err := r.db.GetAnimalTypesByAnimalID(context.Background(), id)
 	if err != nil {
 		logrus.Error(err.Error())
 		return nil, err

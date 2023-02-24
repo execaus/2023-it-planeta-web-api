@@ -11,7 +11,7 @@ import (
 )
 
 const createAccount = `-- name: CreateAccount :one
-INSERT INTO "Account" (first_name, last_name, email, password) VALUES ($1, $2, $3, $4) RETURNING id, first_name, last_name, email, password, deleted
+INSERT INTO "Account" (first_name, last_name, email, password, deleted) VALUES ($1, $2, $3, $4, false) RETURNING id, first_name, last_name, email, password, deleted
 `
 
 type CreateAccountParams struct {
@@ -35,6 +35,29 @@ func (q *Queries) CreateAccount(ctx context.Context, arg CreateAccountParams) (A
 		&i.LastName,
 		&i.Email,
 		&i.Password,
+		&i.Deleted,
+	)
+	return i, err
+}
+
+const createLocation = `-- name: CreateLocation :one
+INSERT INTO "LocationPoint" (latitude, longitude, deleted)
+VALUES ($1, $2, false)
+RETURNING id, latitude, longitude, deleted
+`
+
+type CreateLocationParams struct {
+	Latitude  float64
+	Longitude float64
+}
+
+func (q *Queries) CreateLocation(ctx context.Context, arg CreateLocationParams) (LocationPoint, error) {
+	row := q.db.QueryRowContext(ctx, createLocation, arg.Latitude, arg.Longitude)
+	var i LocationPoint
+	err := row.Scan(
+		&i.ID,
+		&i.Latitude,
+		&i.Longitude,
 		&i.Deleted,
 	)
 	return i, err
@@ -142,15 +165,14 @@ func (q *Queries) GetAnimal(ctx context.Context, id int64) (Animal, error) {
 	return i, err
 }
 
-const getAnimalTypesFromAnimal = `-- name: GetAnimalTypesFromAnimal :many
-SELECT id, animal, type, deleted
+const getAnimalTypesByAnimalID = `-- name: GetAnimalTypesByAnimalID :many
+SELECT id, animal, type
 FROM "AnimalToType"
 WHERE animal=$1
-AND deleted=false
 `
 
-func (q *Queries) GetAnimalTypesFromAnimal(ctx context.Context, animal int64) ([]AnimalToType, error) {
-	rows, err := q.db.QueryContext(ctx, getAnimalTypesFromAnimal, animal)
+func (q *Queries) GetAnimalTypesByAnimalID(ctx context.Context, animal int64) ([]AnimalToType, error) {
+	rows, err := q.db.QueryContext(ctx, getAnimalTypesByAnimalID, animal)
 	if err != nil {
 		return nil, err
 	}
@@ -158,12 +180,7 @@ func (q *Queries) GetAnimalTypesFromAnimal(ctx context.Context, animal int64) ([
 	var items []AnimalToType
 	for rows.Next() {
 		var i AnimalToType
-		if err := rows.Scan(
-			&i.ID,
-			&i.Animal,
-			&i.Type,
-			&i.Deleted,
-		); err != nil {
+		if err := rows.Scan(&i.ID, &i.Animal, &i.Type); err != nil {
 			return nil, err
 		}
 		items = append(items, i)
@@ -196,15 +213,15 @@ func (q *Queries) GetLocation(ctx context.Context, id int64) (LocationPoint, err
 	return i, err
 }
 
-const getVisitedLocationFromAnimal = `-- name: GetVisitedLocationFromAnimal :many
+const getVisitedLocationByAnimalID = `-- name: GetVisitedLocationByAnimalID :many
 SELECT id, location, animal, date, deleted
 FROM "AnimalVisitedLocation"
 WHERE animal=$1
 AND deleted=false
 `
 
-func (q *Queries) GetVisitedLocationFromAnimal(ctx context.Context, animal int64) ([]AnimalVisitedLocation, error) {
-	rows, err := q.db.QueryContext(ctx, getVisitedLocationFromAnimal, animal)
+func (q *Queries) GetVisitedLocationByAnimalID(ctx context.Context, animal int64) ([]AnimalVisitedLocation, error) {
+	rows, err := q.db.QueryContext(ctx, getVisitedLocationByAnimalID, animal)
 	if err != nil {
 		return nil, err
 	}
@@ -248,7 +265,7 @@ func (q *Queries) IsExistAccountByEmail(ctx context.Context, email string) (bool
 	return exists, err
 }
 
-const isExistAccountById = `-- name: IsExistAccountById :one
+const isExistAccountByID = `-- name: IsExistAccountByID :one
 SELECT EXISTS (
   SELECT 1
   FROM "Account"
@@ -257,14 +274,36 @@ SELECT EXISTS (
 )
 `
 
-func (q *Queries) IsExistAccountById(ctx context.Context, id int64) (bool, error) {
-	row := q.db.QueryRowContext(ctx, isExistAccountById, id)
+func (q *Queries) IsExistAccountByID(ctx context.Context, id int64) (bool, error) {
+	row := q.db.QueryRowContext(ctx, isExistAccountByID, id)
 	var exists bool
 	err := row.Scan(&exists)
 	return exists, err
 }
 
-const isExistLocation = `-- name: IsExistLocation :one
+const isExistLocationByCoordinates = `-- name: IsExistLocationByCoordinates :one
+SELECT EXISTS (
+  SELECT 1
+  FROM "LocationPoint"
+  WHERE latitude=$1
+  AND longitude=$2
+  AND deleted=false
+)
+`
+
+type IsExistLocationByCoordinatesParams struct {
+	Latitude  float64
+	Longitude float64
+}
+
+func (q *Queries) IsExistLocationByCoordinates(ctx context.Context, arg IsExistLocationByCoordinatesParams) (bool, error) {
+	row := q.db.QueryRowContext(ctx, isExistLocationByCoordinates, arg.Latitude, arg.Longitude)
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
+}
+
+const isExistLocationByID = `-- name: IsExistLocationByID :one
 SELECT EXISTS (
   SELECT 1
   FROM "LocationPoint"
@@ -273,8 +312,8 @@ SELECT EXISTS (
 )
 `
 
-func (q *Queries) IsExistLocation(ctx context.Context, id int64) (bool, error) {
-	row := q.db.QueryRowContext(ctx, isExistLocation, id)
+func (q *Queries) IsExistLocationByID(ctx context.Context, id int64) (bool, error) {
+	row := q.db.QueryRowContext(ctx, isExistLocationByID, id)
 	var exists bool
 	err := row.Scan(&exists)
 	return exists, err

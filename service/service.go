@@ -21,13 +21,15 @@ type Animal interface {
 }
 
 type AnimalType interface {
-	GetFromAnimal(id int64) ([]queries.AnimalToType, error)
+	GetByAnimalID(id int64) ([]queries.AnimalToType, error)
 }
 
 type Location interface {
 	GetVisitedAnimal(id int64) ([]queries.AnimalVisitedLocation, error)
 	Get(id int64) (*queries.LocationPoint, error)
-	IsExist(id int64) (bool, error)
+	IsExistByID(id int64) (bool, error)
+	IsExistByCoordinates(latitude float64, longitude float64) (bool, error)
+	Create(latitude float64, longitude float64) (*queries.LocationPoint, error)
 }
 
 type Service struct {

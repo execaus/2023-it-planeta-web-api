@@ -1,5 +1,5 @@
 -- name: CreateAccount :one
-INSERT INTO "Account" (first_name, last_name, email, password) VALUES ($1, $2, $3, $4) RETURNING *;
+INSERT INTO "Account" (first_name, last_name, email, password, deleted) VALUES ($1, $2, $3, $4, false) RETURNING *;
 
 -- name: IsExistAccountByEmail :one
 SELECT EXISTS (
@@ -9,7 +9,7 @@ SELECT EXISTS (
   AND deleted=false
 );
 
--- name: IsExistAccountById :one
+-- name: IsExistAccountByID :one
 SELECT EXISTS (
   SELECT 1
   FROM "Account"
@@ -52,13 +52,12 @@ FROM "Animal"
 WHERE id=$1
 AND deleted=false;
 
--- name: GetAnimalTypesFromAnimal :many
+-- name: GetAnimalTypesByAnimalID :many
 SELECT *
 FROM "AnimalToType"
-WHERE animal=$1
-AND deleted=false;
+WHERE animal=$1;
 
--- name: GetVisitedLocationFromAnimal :many
+-- name: GetVisitedLocationByAnimalID :many
 SELECT *
 FROM "AnimalVisitedLocation"
 WHERE animal=$1
@@ -70,10 +69,24 @@ FROM "LocationPoint"
 WHERE id=$1
 AND deleted=false;
 
--- name: IsExistLocation :one
+-- name: IsExistLocationByID :one
 SELECT EXISTS (
   SELECT 1
   FROM "LocationPoint"
   WHERE id=$1
   AND deleted=false
 );
+
+-- name: IsExistLocationByCoordinates :one
+SELECT EXISTS (
+  SELECT 1
+  FROM "LocationPoint"
+  WHERE latitude=$1
+  AND longitude=$2
+  AND deleted=false
+);
+
+-- name: CreateLocation :one
+INSERT INTO "LocationPoint" (latitude, longitude, deleted)
+VALUES ($1, $2, false)
+RETURNING *;

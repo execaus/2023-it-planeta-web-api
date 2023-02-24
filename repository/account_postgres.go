@@ -61,7 +61,7 @@ func (r *AccountPostgres) IsExistByEmail(email string) (bool, error) {
 }
 
 func (r *AccountPostgres) IsExistByID(id int64) (bool, error) {
-	isExist, err := r.db.IsExistAccountById(context.Background(), id)
+	isExist, err := r.db.IsExistAccountByID(context.Background(), id)
 	if err != nil {
 		logrus.Error(err.Error())
 		return false, err

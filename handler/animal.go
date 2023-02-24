@@ -30,7 +30,7 @@ func (h *Handler) getAnimal(c *gin.Context) {
 		return
 	}
 
-	animalTypes, err := h.services.AnimalType.GetFromAnimal(id)
+	animalTypes, err := h.services.AnimalType.GetByAnimalID(id)
 	if err != nil {
 		h.sendInternalServerError(c)
 		return

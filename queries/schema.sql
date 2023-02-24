@@ -49,7 +49,6 @@ CREATE TABLE "AnimalToType" (
     "id" bigserial NOT NULL,
     "animal" bigint NOT NULL,
     "type" character varying NOT NULL,
-    "deleted" boolean NOT NULL,
     CONSTRAINT "AnimalToType_pk" PRIMARY KEY ("id")
 ) WITH (
   OIDS=FALSE

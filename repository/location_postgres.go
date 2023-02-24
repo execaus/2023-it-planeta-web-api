@@ -10,8 +10,28 @@ type LocationPostgres struct {
 	db *queries.Queries
 }
 
-func (r *LocationPostgres) IsExist(id int64) (bool, error) {
-	isExist, err := r.db.IsExistLocation(context.Background(), id)
+func (r *LocationPostgres) Create(params *queries.CreateLocationParams) (*queries.LocationPoint, error) {
+	location, err := r.db.CreateLocation(context.Background(), *params)
+	if err != nil {
+		logrus.Error(err.Error())
+		return nil, err
+	}
+
+	return &location, nil
+}
+
+func (r *LocationPostgres) IsExistByCoordinates(params *queries.IsExistLocationByCoordinatesParams) (bool, error) {
+	isExist, err := r.db.IsExistLocationByCoordinates(context.Background(), *params)
+	if err != nil {
+		logrus.Error(err.Error())
+		return false, err
+	}
+
+	return isExist, nil
+}
+
+func (r *LocationPostgres) IsExistByID(id int64) (bool, error) {
+	isExist, err := r.db.IsExistLocationByID(context.Background(), id)
 	if err != nil {
 		logrus.Error(err.Error())
 		return false, err
@@ -31,7 +51,7 @@ func (r *LocationPostgres) Get(id int64) (*queries.LocationPoint, error) {
 }
 
 func (r *LocationPostgres) GetVisitedAnimal(id int64) ([]queries.AnimalVisitedLocation, error) {
-	points, err := r.db.GetVisitedLocationFromAnimal(context.Background(), id)
+	points, err := r.db.GetVisitedLocationByAnimalID(context.Background(), id)
 	if err != nil {
 		logrus.Error(err.Error())
 		return nil, err

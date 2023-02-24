@@ -24,7 +24,7 @@ func (h *Handler) getLocation(c *gin.Context) {
 		return
 	}
 
-	isExist, err := h.services.Location.IsExist(id)
+	isExist, err := h.services.Location.IsExistByID(id)
 	if err != nil {
 		h.sendInternalServerError(c)
 		return
@@ -48,4 +48,37 @@ func (h *Handler) getLocation(c *gin.Context) {
 	}
 
 	h.sendOKWithBody(c, &output)
+}
+
+func (h *Handler) createLocation(c *gin.Context) {
+	var input models.CreateLocationInput
+	if err := c.BindJSON(&input); err != nil {
+		h.sendBadRequest(c, err.Error())
+		return
+	}
+
+	isExist, err := h.services.Location.IsExistByCoordinates(input.Latitude, input.Longitude)
+	if err != nil {
+		h.sendInternalServerError(c)
+		return
+	}
+
+	if isExist {
+		h.sendConflict(c)
+		return
+	}
+
+	location, err := h.services.Location.Create(input.Latitude, input.Longitude)
+	if err != nil {
+		h.sendInternalServerError(c)
+		return
+	}
+
+	output := &models.CreateLocationOutput{
+		ID:        location.ID,
+		Latitude:  location.Latitude,
+		Longitude: location.Longitude,
+	}
+
+	h.sendCreatedWithBody(c, &output)
 }

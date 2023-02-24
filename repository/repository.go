@@ -20,13 +20,15 @@ type Animal interface {
 }
 
 type AnimalType interface {
-	GetFromAnimal(id int64) ([]queries.AnimalToType, error)
+	GetByAnimalID(id int64) ([]queries.AnimalToType, error)
 }
 
 type Location interface {
 	GetVisitedAnimal(id int64) ([]queries.AnimalVisitedLocation, error)
 	Get(id int64) (*queries.LocationPoint, error)
-	IsExist(id int64) (bool, error)
+	IsExistByID(id int64) (bool, error)
+	IsExistByCoordinates(params *queries.IsExistLocationByCoordinatesParams) (bool, error)
+	Create(params *queries.CreateLocationParams) (*queries.LocationPoint, error)
 }
 
 type Repository struct {
