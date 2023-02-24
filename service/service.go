@@ -31,6 +31,8 @@ type Location interface {
 	IsExistByCoordinates(latitude float64, longitude float64) (bool, error)
 	Create(latitude float64, longitude float64) (*queries.LocationPoint, error)
 	Update(id int64, latitude float64, longitude float64) (*queries.LocationPoint, error)
+	IsLinkedAnimal(id int64) (bool, error)
+	Remove(id int64) error
 }
 
 type Service struct {

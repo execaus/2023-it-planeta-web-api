@@ -10,6 +10,35 @@ type LocationPostgres struct {
 	db *queries.Queries
 }
 
+func (r *LocationPostgres) Remove(id int64) error {
+	if _, err := r.db.RemoveLocation(context.Background(), id); err != nil {
+		logrus.Error(err.Error())
+		return err
+	}
+
+	return nil
+}
+
+func (r *LocationPostgres) IsVisitedAnimal(id int64) (bool, error) {
+	isExist, err := r.db.IsLocationVisitedAnimal(context.Background(), id)
+	if err != nil {
+		logrus.Error(err.Error())
+		return false, err
+	}
+
+	return isExist, nil
+}
+
+func (r *LocationPostgres) IsAnimalChipping(id int64) (bool, error) {
+	isExist, err := r.db.IsLocationChippingAnimal(context.Background(), id)
+	if err != nil {
+		logrus.Error(err.Error())
+		return false, err
+	}
+
+	return isExist, nil
+}
+
 func (r *LocationPostgres) Update(params *queries.UpdateLocationParams) (*queries.LocationPoint, error) {
 	location, err := r.db.UpdateLocation(context.Background(), *params)
 	if err != nil {

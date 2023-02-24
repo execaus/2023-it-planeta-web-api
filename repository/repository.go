@@ -30,6 +30,9 @@ type Location interface {
 	IsExistByCoordinates(params *queries.IsExistLocationByCoordinatesParams) (bool, error)
 	Create(params *queries.CreateLocationParams) (*queries.LocationPoint, error)
 	Update(params *queries.UpdateLocationParams) (*queries.LocationPoint, error)
+	IsVisitedAnimal(id int64) (bool, error)
+	IsAnimalChipping(id int64) (bool, error)
+	Remove(id int64) error
 }
 
 type Repository struct {

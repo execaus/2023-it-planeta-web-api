@@ -9,6 +9,25 @@ type LocationService struct {
 	repo repository.Location
 }
 
+func (s *LocationService) Remove(id int64) error {
+	return s.repo.Remove(id)
+}
+
+func (s *LocationService) IsLinkedAnimal(id int64) (bool, error) {
+	isLinked, err := s.repo.IsVisitedAnimal(id)
+	if err != nil {
+		return false, err
+	}
+	if isLinked {
+		return true, nil
+	}
+	isLinked, err = s.repo.IsAnimalChipping(id)
+	if err != nil {
+		return false, err
+	}
+	return isLinked, nil
+}
+
 func (s *LocationService) Update(id int64, latitude float64, longitude float64) (*queries.LocationPoint, error) {
 	params := &queries.UpdateLocationParams{
 		ID:        id,

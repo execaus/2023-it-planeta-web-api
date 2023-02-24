@@ -319,6 +319,32 @@ func (q *Queries) IsExistLocationByID(ctx context.Context, id int64) (bool, erro
 	return exists, err
 }
 
+const isLocationChippingAnimal = `-- name: IsLocationChippingAnimal :one
+SELECT EXISTS(SELECT 1 FROM "Animal" WHERE "Animal".chipping_location = "LocationPoint".id)
+FROM "LocationPoint"
+WHERE "LocationPoint".id=$1
+`
+
+func (q *Queries) IsLocationChippingAnimal(ctx context.Context, id int64) (bool, error) {
+	row := q.db.QueryRowContext(ctx, isLocationChippingAnimal, id)
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
+}
+
+const isLocationVisitedAnimal = `-- name: IsLocationVisitedAnimal :one
+SELECT EXISTS(SELECT 1 FROM "AnimalVisitedLocation" WHERE "AnimalVisitedLocation".location = "LocationPoint".id)
+FROM "LocationPoint"
+WHERE "LocationPoint".id=$1
+`
+
+func (q *Queries) IsLocationVisitedAnimal(ctx context.Context, id int64) (bool, error) {
+	row := q.db.QueryRowContext(ctx, isLocationVisitedAnimal, id)
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
+}
+
 const removeAccount = `-- name: RemoveAccount :one
 UPDATE "Account"
 SET deleted=true
@@ -335,6 +361,25 @@ func (q *Queries) RemoveAccount(ctx context.Context, id int64) (Account, error) 
 		&i.LastName,
 		&i.Email,
 		&i.Password,
+		&i.Deleted,
+	)
+	return i, err
+}
+
+const removeLocation = `-- name: RemoveLocation :one
+UPDATE "LocationPoint"
+SET deleted=true
+WHERE id=$1
+RETURNING id, latitude, longitude, deleted
+`
+
+func (q *Queries) RemoveLocation(ctx context.Context, id int64) (LocationPoint, error) {
+	row := q.db.QueryRowContext(ctx, removeLocation, id)
+	var i LocationPoint
+	err := row.Scan(
+		&i.ID,
+		&i.Latitude,
+		&i.Longitude,
 		&i.Deleted,
 	)
 	return i, err

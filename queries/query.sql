@@ -96,3 +96,19 @@ UPDATE "LocationPoint"
 SET latitude=$1, longitude=$2
 WHERE id=$3
 RETURNING *;
+
+-- name: IsLocationVisitedAnimal :one
+SELECT EXISTS(SELECT 1 FROM "AnimalVisitedLocation" WHERE "AnimalVisitedLocation".location = "LocationPoint".id)
+FROM "LocationPoint"
+WHERE "LocationPoint".id=$1;
+
+-- name: IsLocationChippingAnimal :one
+SELECT EXISTS(SELECT 1 FROM "Animal" WHERE "Animal".chipping_location = "LocationPoint".id)
+FROM "LocationPoint"
+WHERE "LocationPoint".id=$1;
+
+-- name: RemoveLocation :one
+UPDATE "LocationPoint"
+SET deleted=true
+WHERE id=$1
+RETURNING *;
