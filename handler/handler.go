@@ -23,6 +23,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	{
 		accounts.GET("/:accountId", h.getAccount)
 		accounts.GET("/search", h.getAccounts)
+		accounts.PUT("/:accountId", h.updateAccount)
 	}
 
 	return router

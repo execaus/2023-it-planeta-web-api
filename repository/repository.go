@@ -11,6 +11,7 @@ type Account interface {
 	Registration(input *models.RegistrationAccountInput) (*queries.Account, error)
 	Get(id int64) (*queries.Account, error)
 	GetList(params *queries.GetAccountsParams) ([]queries.Account, error)
+	Update(params *queries.UpdateAccountParams) (*queries.Account, error)
 }
 
 type Repository struct {

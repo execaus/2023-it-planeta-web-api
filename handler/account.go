@@ -40,7 +40,7 @@ func (h *Handler) getAccount(c *gin.Context) {
 		return
 	}
 
-	id, err := strconv.Atoi(stringId)
+	id, err := strconv.ParseInt(stringId, 10, 64)
 	if err != nil {
 		h.sendBadRequest(c, "id is not valid")
 		return
@@ -101,4 +101,67 @@ func (h *Handler) getAccounts(c *gin.Context) {
 	}
 
 	h.sendOKWithBody(c, accounts)
+}
+
+func (h *Handler) updateAccount(c *gin.Context) {
+	stringId := c.Param("accountId")
+	if stringId == "" || stringId == "null" {
+		h.sendBadRequest(c, "id is not valid")
+		return
+	}
+
+	id, err := strconv.ParseInt(stringId, 10, 64)
+	if err != nil {
+		h.sendBadRequest(c, "id is not valid")
+		return
+	}
+
+	if id <= 0 {
+		h.sendBadRequest(c, "id is not valid")
+		return
+	}
+
+	isExist, err := h.services.Account.IsExistById(id)
+	if err != nil {
+		h.sendInternalServerError(c)
+		return
+	}
+
+	if !isExist {
+		h.sendForbidden(c)
+		return
+	}
+
+	var input models.UpdateAccountInput
+	if err = c.ShouldBindJSON(&input); err != nil {
+		h.sendBadRequest(c, err.Error())
+		return
+	}
+
+	// TODO Обновление не своего аккаунта, sendForbidden
+
+	isExist, err = h.services.Account.IsExistByEmail(input.Email)
+	if err != nil {
+		h.sendInternalServerError(c)
+		return
+	}
+
+	if isExist {
+		h.sendConflict(c)
+		return
+	}
+
+	account, err := h.services.Account.Update(id, &input)
+	if err != nil {
+		h.sendInternalServerError(c)
+		return
+	}
+
+	output := &models.UpdateAccountOutput{
+		Id:        account.ID,
+		FirstName: account.FirstName,
+		LastName:  account.LastName,
+		Email:     account.Email,
+	}
+	h.sendOKWithBody(c, output)
 }

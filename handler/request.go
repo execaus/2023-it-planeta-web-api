@@ -33,6 +33,10 @@ func (h *Handler) sendInternalServerError(c *gin.Context) {
 	c.AbortWithStatus(http.StatusInternalServerError)
 }
 
+func (h *Handler) sendForbidden(c *gin.Context) {
+	c.AbortWithStatus(http.StatusForbidden)
+}
+
 func (h *Handler) sendNotFound(c *gin.Context) {
 	c.AbortWithStatus(http.StatusNotFound)
 }

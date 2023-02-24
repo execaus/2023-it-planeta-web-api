@@ -138,3 +138,36 @@ func (q *Queries) IsExistAccountById(ctx context.Context, id int64) (bool, error
 	err := row.Scan(&exists)
 	return exists, err
 }
+
+const updateAccount = `-- name: UpdateAccount :one
+UPDATE "Account"
+SET first_name=$1, last_name=$2, email=$3, password=$4
+WHERE id=$5 RETURNING id, first_name, last_name, email, password
+`
+
+type UpdateAccountParams struct {
+	FirstName string
+	LastName  string
+	Email     string
+	Password  string
+	ID        int64
+}
+
+func (q *Queries) UpdateAccount(ctx context.Context, arg UpdateAccountParams) (Account, error) {
+	row := q.db.QueryRowContext(ctx, updateAccount,
+		arg.FirstName,
+		arg.LastName,
+		arg.Email,
+		arg.Password,
+		arg.ID,
+	)
+	var i Account
+	err := row.Scan(
+		&i.ID,
+		&i.FirstName,
+		&i.LastName,
+		&i.Email,
+		&i.Password,
+	)
+	return i, err
+}

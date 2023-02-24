@@ -26,3 +26,8 @@ AND (last_name IS NULL OR lower(last_name) LIKE lower('%' || $2 || '%'))
 AND (email IS NULL OR lower(email) LIKE lower('%' || $3 || '%'))
 ORDER BY id DESC
 LIMIT $4 OFFSET $5;
+
+-- name: UpdateAccount :one
+UPDATE "Account"
+SET first_name=$1, last_name=$2, email=$3, password=$4
+WHERE id=$5 RETURNING *;

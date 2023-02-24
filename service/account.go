@@ -17,6 +17,17 @@ type AccountService struct {
 	repo repository.Account
 }
 
+func (s *AccountService) Update(id int64, input *models.UpdateAccountInput) (*queries.Account, error) {
+	params := queries.UpdateAccountParams{
+		FirstName: input.FirstName,
+		LastName:  input.LastName,
+		Email:     input.Email,
+		Password:  input.Password,
+		ID:        id,
+	}
+	return s.repo.Update(&params)
+}
+
 func (s *AccountService) GetList(input *models.GetAccountsInput) ([]*models.GetAccountsOutput, error) {
 	var limit int32
 	var offset int32
@@ -65,18 +76,16 @@ func (s *AccountService) GetList(input *models.GetAccountsInput) ([]*models.GetA
 	return accounts, nil
 }
 
-func (s *AccountService) Get(id int) (*queries.Account, error) {
-	idNumber64 := int64(id)
-	return s.repo.Get(idNumber64)
+func (s *AccountService) Get(id int64) (*queries.Account, error) {
+	return s.repo.Get(id)
 }
 
 func (s *AccountService) IsExistByEmail(email string) (bool, error) {
 	return s.repo.IsExistByEmail(email)
 }
 
-func (s *AccountService) IsExistById(id int) (bool, error) {
-	idNumber64 := int64(id)
-	return s.repo.IsExistById(idNumber64)
+func (s *AccountService) IsExistById(id int64) (bool, error) {
+	return s.repo.IsExistById(id)
 }
 
 func (s *AccountService) Registration(input *models.RegistrationAccountInput) (*models.RegistrationAccountOutput, error) {

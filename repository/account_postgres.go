@@ -11,6 +11,16 @@ type AccountPostgres struct {
 	db *queries.Queries
 }
 
+func (r *AccountPostgres) Update(params *queries.UpdateAccountParams) (*queries.Account, error) {
+	account, err := r.db.UpdateAccount(context.Background(), *params)
+	if err != nil {
+		logrus.Error(err.Error())
+		return nil, err
+	}
+
+	return &account, nil
+}
+
 func (r *AccountPostgres) GetList(params *queries.GetAccountsParams) ([]queries.Account, error) {
 	accounts, err := r.db.GetAccounts(context.Background(), *params)
 	if err != nil {
