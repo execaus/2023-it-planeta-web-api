@@ -25,6 +25,7 @@ type AnimalType interface {
 
 type Location interface {
 	GetVisitedAnimal(id int64) ([]queries.AnimalVisitedLocation, error)
+	Get(id int64) (*queries.LocationPoint, error)
 }
 
 type Repository struct {

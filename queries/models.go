@@ -64,4 +64,5 @@ type LocationPoint struct {
 	ID        int64
 	Latitude  float64
 	Longitude float64
+	Deleted   bool
 }

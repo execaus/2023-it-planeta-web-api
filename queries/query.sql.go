@@ -177,6 +177,25 @@ func (q *Queries) GetAnimalTypesFromAnimal(ctx context.Context, animal int64) ([
 	return items, nil
 }
 
+const getLocation = `-- name: GetLocation :one
+SELECT id, latitude, longitude, deleted
+FROM "LocationPoint"
+WHERE id=$1
+AND deleted=false
+`
+
+func (q *Queries) GetLocation(ctx context.Context, id int64) (LocationPoint, error) {
+	row := q.db.QueryRowContext(ctx, getLocation, id)
+	var i LocationPoint
+	err := row.Scan(
+		&i.ID,
+		&i.Latitude,
+		&i.Longitude,
+		&i.Deleted,
+	)
+	return i, err
+}
+
 const getVisitedLocationFromAnimal = `-- name: GetVisitedLocationFromAnimal :many
 SELECT id, location, animal, date, deleted
 FROM "AnimalVisitedLocation"

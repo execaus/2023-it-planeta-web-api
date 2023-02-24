@@ -10,6 +10,16 @@ type LocationPostgres struct {
 	db *queries.Queries
 }
 
+func (r *LocationPostgres) Get(id int64) (*queries.LocationPoint, error) {
+	location, err := r.db.GetLocation(context.Background(), id)
+	if err != nil {
+		logrus.Error(err.Error())
+		return nil, err
+	}
+
+	return &location, err
+}
+
 func (r *LocationPostgres) GetVisitedAnimal(id int64) ([]queries.AnimalVisitedLocation, error) {
 	points, err := r.db.GetVisitedLocationFromAnimal(context.Background(), id)
 	if err != nil {

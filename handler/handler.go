@@ -27,6 +27,11 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		accounts.DELETE("/:accountId", h.deleteAccount)
 	}
 
+	location := router.Group("/locations")
+	{
+		location.GET("/:pointId", h.getLocation)
+	}
+
 	animals := router.Group("/animals")
 	{
 		animals.GET("/:animalId", h.getAnimal)

@@ -39,6 +39,7 @@ CREATE TABLE "LocationPoint" (
     "id" bigserial NOT NULL,
     "latitude" double precision NOT NULL,
     "longitude" double precision NOT NULL,
+    "deleted" boolean NOT NULL,
     CONSTRAINT "LocationPoint_pk" PRIMARY KEY ("id")
 ) WITH (
   OIDS=FALSE

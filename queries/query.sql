@@ -63,3 +63,9 @@ SELECT *
 FROM "AnimalVisitedLocation"
 WHERE animal=$1
 AND deleted=false;
+
+-- name: GetLocation :one
+SELECT *
+FROM "LocationPoint"
+WHERE id=$1
+AND deleted=false;
