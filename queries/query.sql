@@ -69,3 +69,11 @@ SELECT *
 FROM "LocationPoint"
 WHERE id=$1
 AND deleted=false;
+
+-- name: IsExistLocation :one
+SELECT EXISTS (
+  SELECT 1
+  FROM "LocationPoint"
+  WHERE id=$1
+  AND deleted=false
+);

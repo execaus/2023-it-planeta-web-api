@@ -9,12 +9,16 @@ type LocationService struct {
 	repo repository.Location
 }
 
-func (r *LocationService) Get(id int64) (*queries.LocationPoint, error) {
-	return r.repo.Get(id)
+func (s *LocationService) IsExist(id int64) (bool, error) {
+	return s.repo.IsExist(id)
 }
 
-func (r *LocationService) GetVisitedAnimal(id int64) ([]queries.AnimalVisitedLocation, error) {
-	return r.repo.GetVisitedAnimal(id)
+func (s *LocationService) Get(id int64) (*queries.LocationPoint, error) {
+	return s.repo.Get(id)
+}
+
+func (s *LocationService) GetVisitedAnimal(id int64) ([]queries.AnimalVisitedLocation, error) {
+	return s.repo.GetVisitedAnimal(id)
 }
 
 func NewLocationService(repo repository.Location) *LocationService {

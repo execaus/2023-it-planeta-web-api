@@ -10,6 +10,16 @@ type LocationPostgres struct {
 	db *queries.Queries
 }
 
+func (r *LocationPostgres) IsExist(id int64) (bool, error) {
+	isExist, err := r.db.IsExistLocation(context.Background(), id)
+	if err != nil {
+		logrus.Error(err.Error())
+		return false, err
+	}
+
+	return isExist, nil
+}
+
 func (r *LocationPostgres) Get(id int64) (*queries.LocationPoint, error) {
 	location, err := r.db.GetLocation(context.Background(), id)
 	if err != nil {

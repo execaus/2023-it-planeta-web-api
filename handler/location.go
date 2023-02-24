@@ -24,6 +24,17 @@ func (h *Handler) getLocation(c *gin.Context) {
 		return
 	}
 
+	isExist, err := h.services.Location.IsExist(id)
+	if err != nil {
+		h.sendInternalServerError(c)
+		return
+	}
+
+	if !isExist {
+		h.sendNotFound(c)
+		return
+	}
+
 	location, err := h.services.Location.Get(id)
 	if err != nil {
 		h.sendInternalServerError(c)

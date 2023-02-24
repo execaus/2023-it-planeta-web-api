@@ -264,6 +264,22 @@ func (q *Queries) IsExistAccountById(ctx context.Context, id int64) (bool, error
 	return exists, err
 }
 
+const isExistLocation = `-- name: IsExistLocation :one
+SELECT EXISTS (
+  SELECT 1
+  FROM "LocationPoint"
+  WHERE id=$1
+  AND deleted=false
+)
+`
+
+func (q *Queries) IsExistLocation(ctx context.Context, id int64) (bool, error) {
+	row := q.db.QueryRowContext(ctx, isExistLocation, id)
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
+}
+
 const removeAccount = `-- name: RemoveAccount :one
 UPDATE "Account"
 SET deleted=true
