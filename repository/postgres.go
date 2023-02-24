@@ -6,7 +6,7 @@ import (
 	"2023-it-planeta-web-api/queries"
 	"database/sql"
 	"fmt"
-	_ "github.com/lib/pq"
+	_ "github.com/lib/pq" //nolint:nolintlint,revive
 	"github.com/sirupsen/logrus"
 )
 

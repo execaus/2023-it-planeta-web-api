@@ -14,11 +14,9 @@ import (
 	"syscall"
 )
 
-func init() {
-	logrus.SetFormatter(&logrus.JSONFormatter{})
-}
-
 func main() {
+	logrus.SetFormatter(&logrus.JSONFormatter{})
+
 	var serverInstance server.Server
 
 	env := models.LoadEnv()

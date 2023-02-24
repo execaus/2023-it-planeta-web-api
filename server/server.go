@@ -11,13 +11,19 @@ type Server struct {
 	httpServer *http.Server
 }
 
+const (
+	serverMaxHeaderBytes = 1 << 20
+	serverReadTimeout    = 10 * time.Second
+	serverWriteTimeout   = 10 * time.Second
+)
+
 func (s *Server) Run(port string, handler http.Handler) error {
 	s.httpServer = &http.Server{
 		Addr:           ":" + port,
 		Handler:        handler,
-		MaxHeaderBytes: 1 << 20, // 1 MB
-		ReadTimeout:    10 * time.Second,
-		WriteTimeout:   10 * time.Second,
+		MaxHeaderBytes: serverMaxHeaderBytes,
+		ReadTimeout:    serverReadTimeout,
+		WriteTimeout:   serverWriteTimeout,
 	}
 	logrus.Info("server started successfully")
 	return s.httpServer.ListenAndServe()

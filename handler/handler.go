@@ -5,6 +5,11 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+const (
+	stringNull  = "null"
+	stringEmpty = ""
+)
+
 type Handler struct {
 	services *service.Service
 }
@@ -26,13 +31,10 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		accounts.PUT("/:accountId", h.updateAccount)
 	}
 
+	animals := router.Group("/animals")
+	{
+		animals.GET("/:animalId", h.getAnimal)
+	}
+
 	return router
-}
-
-func requiredAuthMiddleware(c *gin.Context) {
-
-}
-
-func notAuthMiddleware(c *gin.Context) {
-
 }

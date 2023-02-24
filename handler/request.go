@@ -5,14 +5,6 @@ import (
 	"net/http"
 )
 
-func (h *Handler) sendOK(c *gin.Context) {
-	c.JSON(http.StatusOK, nil)
-}
-
-func (h *Handler) sendCreated(c *gin.Context) {
-	c.JSON(http.StatusCreated, nil)
-}
-
 func (h *Handler) sendCreatedWithBody(c *gin.Context, body interface{}) {
 	c.JSON(http.StatusCreated, body)
 }

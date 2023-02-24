@@ -66,7 +66,7 @@ func (s *AccountService) GetList(input *models.GetAccountsInput) ([]*models.GetA
 	accounts := make([]*models.GetAccountsOutput, 0)
 	for _, account := range repositoryAccounts {
 		accounts = append(accounts, &models.GetAccountsOutput{
-			Id:        account.ID,
+			ID:        account.ID,
 			FirstName: account.FirstName,
 			LastName:  account.LastName,
 			Email:     account.Email,
@@ -84,18 +84,20 @@ func (s *AccountService) IsExistByEmail(email string) (bool, error) {
 	return s.repo.IsExistByEmail(email)
 }
 
-func (s *AccountService) IsExistById(id int64) (bool, error) {
-	return s.repo.IsExistById(id)
+func (s *AccountService) IsExistByID(id int64) (bool, error) {
+	return s.repo.IsExistByID(id)
 }
 
-func (s *AccountService) Registration(input *models.RegistrationAccountInput) (*models.RegistrationAccountOutput, error) {
+func (s *AccountService) Registration(
+	input *models.RegistrationAccountInput,
+) (*models.RegistrationAccountOutput, error) {
 	account, err := s.repo.Registration(input)
 	if err != nil {
 		return nil, err
 	}
 
 	return &models.RegistrationAccountOutput{
-		Id:        account.ID,
+		ID:        account.ID,
 		FirstName: account.FirstName,
 		LastName:  account.LastName,
 		Email:     account.Email,

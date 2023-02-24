@@ -34,13 +34,13 @@ func (h *Handler) registrationAccount(c *gin.Context) {
 }
 
 func (h *Handler) getAccount(c *gin.Context) {
-	stringId := c.Param("accountId")
-	if stringId == "" || stringId == "null" {
+	stringID := c.Param("accountId")
+	if stringID == stringEmpty || stringID == stringNull {
 		h.sendBadRequest(c, "id is not valid")
 		return
 	}
 
-	id, err := strconv.ParseInt(stringId, 10, 64)
+	id, err := strconv.ParseInt(stringID, 10, 64)
 	if err != nil {
 		h.sendBadRequest(c, "id is not valid")
 		return
@@ -51,7 +51,7 @@ func (h *Handler) getAccount(c *gin.Context) {
 		return
 	}
 
-	isExist, err := h.services.Account.IsExistById(id)
+	isExist, err := h.services.Account.IsExistByID(id)
 	if err != nil {
 		h.sendInternalServerError(c)
 		return
@@ -69,7 +69,7 @@ func (h *Handler) getAccount(c *gin.Context) {
 	}
 
 	output := &models.GetAccountOutput{
-		Id:        account.ID,
+		ID:        account.ID,
 		FirstName: account.FirstName,
 		LastName:  account.LastName,
 		Email:     account.Email,
@@ -104,13 +104,13 @@ func (h *Handler) getAccounts(c *gin.Context) {
 }
 
 func (h *Handler) updateAccount(c *gin.Context) {
-	stringId := c.Param("accountId")
-	if stringId == "" || stringId == "null" {
+	stringID := c.Param("accountId")
+	if stringID == stringEmpty || stringID == stringNull {
 		h.sendBadRequest(c, "id is not valid")
 		return
 	}
 
-	id, err := strconv.ParseInt(stringId, 10, 64)
+	id, err := strconv.ParseInt(stringID, 10, 64)
 	if err != nil {
 		h.sendBadRequest(c, "id is not valid")
 		return
@@ -121,7 +121,7 @@ func (h *Handler) updateAccount(c *gin.Context) {
 		return
 	}
 
-	isExist, err := h.services.Account.IsExistById(id)
+	isExist, err := h.services.Account.IsExistByID(id)
 	if err != nil {
 		h.sendInternalServerError(c)
 		return
@@ -158,7 +158,7 @@ func (h *Handler) updateAccount(c *gin.Context) {
 	}
 
 	output := &models.UpdateAccountOutput{
-		Id:        account.ID,
+		ID:        account.ID,
 		FirstName: account.FirstName,
 		LastName:  account.LastName,
 		Email:     account.Email,

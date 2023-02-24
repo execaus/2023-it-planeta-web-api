@@ -31,3 +31,19 @@ LIMIT $4 OFFSET $5;
 UPDATE "Account"
 SET first_name=$1, last_name=$2, email=$3, password=$4
 WHERE id=$5 RETURNING *;
+
+
+-- name: GetAnimal :one
+SELECT *
+FROM "Animal"
+WHERE id=$1;
+
+-- name: GetAnimalTypesFromAnimal :many
+SELECT *
+FROM "AnimalToType"
+WHERE animal=$1;
+
+-- name: GetVisitedLocationFromAnimal :many
+SELECT *
+FROM "AnimalVisitedLocation"
+WHERE animal=$1;

@@ -8,14 +8,14 @@ type RegistrationAccountInput struct {
 }
 
 type RegistrationAccountOutput struct {
-	Id        int64  `json:"id"`
+	ID        int64  `json:"id"`
 	FirstName string `json:"firstName"`
 	LastName  string `json:"lastName"`
 	Email     string `json:"email"`
 }
 
 type GetAccountOutput struct {
-	Id        int64  `json:"id,omitempty"`
+	ID        int64  `json:"id,omitempty"`
 	FirstName string `json:"firstName,omitempty"`
 	LastName  string `json:"lastName,omitempty"`
 	Email     string `json:"email,omitempty"`
@@ -30,7 +30,7 @@ type GetAccountsInput struct {
 }
 
 type GetAccountsOutput struct {
-	Id        int64  `json:"id"`
+	ID        int64  `json:"id"`
 	FirstName string `json:"firstName"`
 	LastName  string `json:"lastName"`
 	Email     string `json:"email"`
@@ -44,7 +44,7 @@ type UpdateAccountInput struct {
 }
 
 type UpdateAccountOutput struct {
-	Id        int64  `json:"id"`
+	ID        int64  `json:"id"`
 	FirstName string `json:"firstName"`
 	LastName  string `json:"lastName"`
 	Email     string `json:"email"`

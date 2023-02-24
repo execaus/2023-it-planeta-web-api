@@ -17,3 +17,6 @@ restart_test:
 	make docker_postgres_build
 	make docker_api_build
 	docker compose up
+
+lint:
+	golangci-lint run -c ./.golangci.yml

@@ -109,6 +109,93 @@ func (q *Queries) GetAccounts(ctx context.Context, arg GetAccountsParams) ([]Acc
 	return items, nil
 }
 
+const getAnimal = `-- name: GetAnimal :one
+SELECT id, chipping_location, weight, length, height, gender, life_status, chipping_date, chipper, death_date
+FROM "Animal"
+WHERE id=$1
+`
+
+func (q *Queries) GetAnimal(ctx context.Context, id int64) (Animal, error) {
+	row := q.db.QueryRowContext(ctx, getAnimal, id)
+	var i Animal
+	err := row.Scan(
+		&i.ID,
+		&i.ChippingLocation,
+		&i.Weight,
+		&i.Length,
+		&i.Height,
+		&i.Gender,
+		&i.LifeStatus,
+		&i.ChippingDate,
+		&i.Chipper,
+		&i.DeathDate,
+	)
+	return i, err
+}
+
+const getAnimalTypesFromAnimal = `-- name: GetAnimalTypesFromAnimal :many
+SELECT id, animal, type
+FROM "AnimalToType"
+WHERE animal=$1
+`
+
+func (q *Queries) GetAnimalTypesFromAnimal(ctx context.Context, animal int64) ([]AnimalToType, error) {
+	rows, err := q.db.QueryContext(ctx, getAnimalTypesFromAnimal, animal)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []AnimalToType
+	for rows.Next() {
+		var i AnimalToType
+		if err := rows.Scan(&i.ID, &i.Animal, &i.Type); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getVisitedLocationFromAnimal = `-- name: GetVisitedLocationFromAnimal :many
+SELECT id, location, animal, date
+FROM "AnimalVisitedLocation"
+WHERE animal=$1
+`
+
+func (q *Queries) GetVisitedLocationFromAnimal(ctx context.Context, animal int64) ([]AnimalVisitedLocation, error) {
+	rows, err := q.db.QueryContext(ctx, getVisitedLocationFromAnimal, animal)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []AnimalVisitedLocation
+	for rows.Next() {
+		var i AnimalVisitedLocation
+		if err := rows.Scan(
+			&i.ID,
+			&i.Location,
+			&i.Animal,
+			&i.Date,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const isExistAccountByEmail = `-- name: IsExistAccountByEmail :one
 SELECT EXISTS (
   SELECT 1
