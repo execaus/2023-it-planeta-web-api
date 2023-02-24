@@ -15,6 +15,7 @@ type Account struct {
 	LastName  string
 	Email     string
 	Password  string
+	Deleted   bool
 }
 
 type Animal struct {
@@ -28,6 +29,7 @@ type Animal struct {
 	ChippingDate     time.Time
 	Chipper          int64
 	DeathDate        sql.NullTime
+	Deleted          bool
 }
 
 type AnimalGender struct {
@@ -39,13 +41,15 @@ type AnimalLifeStatus struct {
 }
 
 type AnimalToType struct {
-	ID     int64
-	Animal int64
-	Type   string
+	ID      int64
+	Animal  int64
+	Type    string
+	Deleted bool
 }
 
 type AnimalType struct {
-	Value string
+	Value   string
+	Deleted bool
 }
 
 type AnimalVisitedLocation struct {
@@ -53,6 +57,7 @@ type AnimalVisitedLocation struct {
 	Location int64
 	Animal   int64
 	Date     time.Time
+	Deleted  bool
 }
 
 type LocationPoint struct {

@@ -13,6 +13,10 @@ func (h *Handler) sendOKWithBody(c *gin.Context, body interface{}) {
 	c.JSON(http.StatusOK, body)
 }
 
+func (h *Handler) sendOk(c *gin.Context) {
+	c.JSON(http.StatusOK, nil)
+}
+
 func (h *Handler) sendBadRequest(c *gin.Context, message string) {
 	c.AbortWithStatusJSON(http.StatusBadRequest, message)
 }

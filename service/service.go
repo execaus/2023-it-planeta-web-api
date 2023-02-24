@@ -13,6 +13,7 @@ type Account interface {
 	Get(id int64) (*queries.Account, error)
 	GetList(input *models.GetAccountsInput) ([]*models.GetAccountsOutput, error)
 	Update(id int64, input *models.UpdateAccountInput) (*queries.Account, error)
+	Remove(id int64) error
 }
 
 type Animal interface {

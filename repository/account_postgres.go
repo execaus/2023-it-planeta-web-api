@@ -11,6 +11,16 @@ type AccountPostgres struct {
 	db *queries.Queries
 }
 
+func (r *AccountPostgres) Remove(id int64) error {
+	_, err := r.db.RemoveAccount(context.Background(), id)
+	if err != nil {
+		logrus.Error(err.Error())
+		return err
+	}
+
+	return nil
+}
+
 func (r *AccountPostgres) Update(params *queries.UpdateAccountParams) (*queries.Account, error) {
 	account, err := r.db.UpdateAccount(context.Background(), *params)
 	if err != nil {

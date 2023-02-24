@@ -11,7 +11,7 @@ import (
 )
 
 const createAccount = `-- name: CreateAccount :one
-INSERT INTO "Account" (first_name, last_name, email, password) VALUES ($1, $2, $3, $4) RETURNING id, first_name, last_name, email, password
+INSERT INTO "Account" (first_name, last_name, email, password) VALUES ($1, $2, $3, $4) RETURNING id, first_name, last_name, email, password, deleted
 `
 
 type CreateAccountParams struct {
@@ -35,12 +35,16 @@ func (q *Queries) CreateAccount(ctx context.Context, arg CreateAccountParams) (A
 		&i.LastName,
 		&i.Email,
 		&i.Password,
+		&i.Deleted,
 	)
 	return i, err
 }
 
 const getAccount = `-- name: GetAccount :one
-SELECT id, first_name, last_name, email, password FROM "Account" WHERE id=$1
+SELECT id, first_name, last_name, email, password, deleted
+FROM "Account"
+WHERE id=$1
+AND deleted=false
 `
 
 func (q *Queries) GetAccount(ctx context.Context, id int64) (Account, error) {
@@ -52,16 +56,18 @@ func (q *Queries) GetAccount(ctx context.Context, id int64) (Account, error) {
 		&i.LastName,
 		&i.Email,
 		&i.Password,
+		&i.Deleted,
 	)
 	return i, err
 }
 
 const getAccounts = `-- name: GetAccounts :many
-SELECT id, first_name, last_name, email, password
+SELECT id, first_name, last_name, email, password, deleted
 FROM "Account"
 WHERE (first_name IS NULL OR lower(first_name) LIKE lower('%' || $1 || '%'))
 AND (last_name IS NULL OR lower(last_name) LIKE lower('%' || $2 || '%'))
 AND (email IS NULL OR lower(email) LIKE lower('%' || $3 || '%'))
+AND deleted=false
 ORDER BY id DESC
 LIMIT $4 OFFSET $5
 `
@@ -95,6 +101,7 @@ func (q *Queries) GetAccounts(ctx context.Context, arg GetAccountsParams) ([]Acc
 			&i.LastName,
 			&i.Email,
 			&i.Password,
+			&i.Deleted,
 		); err != nil {
 			return nil, err
 		}
@@ -110,9 +117,10 @@ func (q *Queries) GetAccounts(ctx context.Context, arg GetAccountsParams) ([]Acc
 }
 
 const getAnimal = `-- name: GetAnimal :one
-SELECT id, chipping_location, weight, length, height, gender, life_status, chipping_date, chipper, death_date
+SELECT id, chipping_location, weight, length, height, gender, life_status, chipping_date, chipper, death_date, deleted
 FROM "Animal"
 WHERE id=$1
+AND deleted=false
 `
 
 func (q *Queries) GetAnimal(ctx context.Context, id int64) (Animal, error) {
@@ -129,14 +137,16 @@ func (q *Queries) GetAnimal(ctx context.Context, id int64) (Animal, error) {
 		&i.ChippingDate,
 		&i.Chipper,
 		&i.DeathDate,
+		&i.Deleted,
 	)
 	return i, err
 }
 
 const getAnimalTypesFromAnimal = `-- name: GetAnimalTypesFromAnimal :many
-SELECT id, animal, type
+SELECT id, animal, type, deleted
 FROM "AnimalToType"
 WHERE animal=$1
+AND deleted=false
 `
 
 func (q *Queries) GetAnimalTypesFromAnimal(ctx context.Context, animal int64) ([]AnimalToType, error) {
@@ -148,7 +158,12 @@ func (q *Queries) GetAnimalTypesFromAnimal(ctx context.Context, animal int64) ([
 	var items []AnimalToType
 	for rows.Next() {
 		var i AnimalToType
-		if err := rows.Scan(&i.ID, &i.Animal, &i.Type); err != nil {
+		if err := rows.Scan(
+			&i.ID,
+			&i.Animal,
+			&i.Type,
+			&i.Deleted,
+		); err != nil {
 			return nil, err
 		}
 		items = append(items, i)
@@ -163,9 +178,10 @@ func (q *Queries) GetAnimalTypesFromAnimal(ctx context.Context, animal int64) ([
 }
 
 const getVisitedLocationFromAnimal = `-- name: GetVisitedLocationFromAnimal :many
-SELECT id, location, animal, date
+SELECT id, location, animal, date, deleted
 FROM "AnimalVisitedLocation"
 WHERE animal=$1
+AND deleted=false
 `
 
 func (q *Queries) GetVisitedLocationFromAnimal(ctx context.Context, animal int64) ([]AnimalVisitedLocation, error) {
@@ -182,6 +198,7 @@ func (q *Queries) GetVisitedLocationFromAnimal(ctx context.Context, animal int64
 			&i.Location,
 			&i.Animal,
 			&i.Date,
+			&i.Deleted,
 		); err != nil {
 			return nil, err
 		}
@@ -200,7 +217,8 @@ const isExistAccountByEmail = `-- name: IsExistAccountByEmail :one
 SELECT EXISTS (
   SELECT 1
   FROM "Account"
-  WHERE email = $1
+  WHERE email=$1
+  AND deleted=false
 )
 `
 
@@ -215,7 +233,8 @@ const isExistAccountById = `-- name: IsExistAccountById :one
 SELECT EXISTS (
   SELECT 1
   FROM "Account"
-  WHERE id = $1
+  WHERE id=$1
+  AND deleted=false
 )
 `
 
@@ -226,10 +245,33 @@ func (q *Queries) IsExistAccountById(ctx context.Context, id int64) (bool, error
 	return exists, err
 }
 
+const removeAccount = `-- name: RemoveAccount :one
+UPDATE "Account"
+SET deleted=true
+WHERE id=$1
+RETURNING id, first_name, last_name, email, password, deleted
+`
+
+func (q *Queries) RemoveAccount(ctx context.Context, id int64) (Account, error) {
+	row := q.db.QueryRowContext(ctx, removeAccount, id)
+	var i Account
+	err := row.Scan(
+		&i.ID,
+		&i.FirstName,
+		&i.LastName,
+		&i.Email,
+		&i.Password,
+		&i.Deleted,
+	)
+	return i, err
+}
+
 const updateAccount = `-- name: UpdateAccount :one
 UPDATE "Account"
 SET first_name=$1, last_name=$2, email=$3, password=$4
-WHERE id=$5 RETURNING id, first_name, last_name, email, password
+WHERE id=$5
+AND deleted=false
+RETURNING id, first_name, last_name, email, password, deleted
 `
 
 type UpdateAccountParams struct {
@@ -255,6 +297,7 @@ func (q *Queries) UpdateAccount(ctx context.Context, arg UpdateAccountParams) (A
 		&i.LastName,
 		&i.Email,
 		&i.Password,
+		&i.Deleted,
 	)
 	return i, err
 }

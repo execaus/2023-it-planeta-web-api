@@ -6,6 +6,11 @@ import (
 	"time"
 )
 
+const (
+	stringNull  = "null"
+	stringEmpty = ""
+)
+
 func convertDateToISO8601(date time.Time) string {
 	return date.Format(time.RFC3339)
 }

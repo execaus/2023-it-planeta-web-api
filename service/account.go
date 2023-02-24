@@ -17,6 +17,10 @@ type AccountService struct {
 	repo repository.Account
 }
 
+func (s *AccountService) Remove(id int64) error {
+	return s.repo.Remove(id)
+}
+
 func (s *AccountService) Update(id int64, input *models.UpdateAccountInput) (*queries.Account, error) {
 	params := queries.UpdateAccountParams{
 		FirstName: input.FirstName,

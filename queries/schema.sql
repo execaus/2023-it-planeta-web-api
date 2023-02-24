@@ -4,6 +4,7 @@ CREATE TABLE "Account" (
     "last_name" character varying NOT NULL,
     "email" character varying NOT NULL,
     "password" character varying NOT NULL,
+    "deleted" boolean NOT NULL,
     CONSTRAINT "Account_pk" PRIMARY KEY ("id")
 ) WITH (
   OIDS=FALSE
@@ -20,6 +21,7 @@ CREATE TABLE "Animal" (
     "chipping_date" TIMESTAMP NOT NULL,
     "chipper" bigint NOT NULL,
     "death_date" TIMESTAMP,
+    "deleted" boolean NOT NULL,
     CONSTRAINT "Animal_pk" PRIMARY KEY ("id")
 ) WITH (
   OIDS=FALSE
@@ -27,6 +29,7 @@ CREATE TABLE "Animal" (
 
 CREATE TABLE "AnimalType" (
     "value" character varying NOT NULL,
+    "deleted" boolean NOT NULL,
     CONSTRAINT "AnimalType_pk" PRIMARY KEY ("value")
 ) WITH (
   OIDS=FALSE
@@ -45,6 +48,7 @@ CREATE TABLE "AnimalToType" (
     "id" bigserial NOT NULL,
     "animal" bigint NOT NULL,
     "type" character varying NOT NULL,
+    "deleted" boolean NOT NULL,
     CONSTRAINT "AnimalToType_pk" PRIMARY KEY ("id")
 ) WITH (
   OIDS=FALSE
@@ -69,6 +73,7 @@ CREATE TABLE "AnimalVisitedLocation" (
     "location" bigint NOT NULL,
     "animal" bigint NOT NULL,
     "date" TIMESTAMP NOT NULL,
+    "deleted" boolean NOT NULL,
     CONSTRAINT "AnimalVisitedLocation_pk" PRIMARY KEY ("id")
 ) WITH (
   OIDS=FALSE

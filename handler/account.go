@@ -165,3 +165,42 @@ func (h *Handler) updateAccount(c *gin.Context) {
 	}
 	h.sendOKWithBody(c, output)
 }
+
+func (h *Handler) deleteAccount(c *gin.Context) {
+	stringID := c.Param("accountId")
+	if stringID == stringEmpty || stringID == stringNull {
+		h.sendBadRequest(c, "id is not valid")
+		return
+	}
+
+	id, err := strconv.ParseInt(stringID, 10, 64)
+	if err != nil {
+		h.sendBadRequest(c, "id is not valid")
+		return
+	}
+
+	if id <= 0 {
+		h.sendBadRequest(c, "id is not valid")
+		return
+	}
+
+	isExist, err := h.services.Account.IsExistByID(id)
+	if err != nil {
+		h.sendInternalServerError(c)
+		return
+	}
+
+	if !isExist {
+		h.sendForbidden(c)
+		return
+	}
+
+	// TODO удаление не своего аккаунта
+
+	if err = h.services.Account.Remove(id); err != nil {
+		h.sendInternalServerError(c)
+		return
+	}
+
+	h.sendOk(c)
+}
