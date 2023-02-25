@@ -12,7 +12,7 @@ func (h *Handler) getAnimalType(c *gin.Context) {
 		return
 	}
 
-	isExist, err := h.services.AnimalType.IsExist(id)
+	isExist, err := h.services.AnimalType.IsExistByID(id)
 	if err != nil {
 		h.sendInternalServerError(c)
 		return
@@ -23,7 +23,7 @@ func (h *Handler) getAnimalType(c *gin.Context) {
 		return
 	}
 
-	animalType, err := h.services.AnimalType.GetById(id)
+	animalType, err := h.services.AnimalType.GetByID(id)
 	if err != nil {
 		h.sendInternalServerError(c)
 		return
@@ -35,4 +35,37 @@ func (h *Handler) getAnimalType(c *gin.Context) {
 	}
 
 	h.sendOKWithBody(c, output)
+}
+
+func (h *Handler) createAnimalType(c *gin.Context) {
+	var input models.CreateAnimalTypeInput
+
+	if err := c.BindJSON(&input); err != nil {
+		h.sendBadRequest(c, err.Error())
+		return
+	}
+
+	isExist, err := h.services.AnimalType.IsExistByType(input.Type)
+	if err != nil {
+		h.sendInternalServerError(c)
+		return
+	}
+
+	if !isExist {
+		h.sendConflict(c)
+		return
+	}
+
+	animalType, err := h.services.AnimalType.Create(input.Type)
+	if err != nil {
+		h.sendInternalServerError(c)
+		return
+	}
+
+	output := &models.CreateAnimalTypeOutput{
+		ID:   animalType.ID,
+		Type: animalType.Value,
+	}
+
+	h.sendCreatedWithBody(c, output)
 }

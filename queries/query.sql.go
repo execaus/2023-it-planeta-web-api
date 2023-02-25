@@ -40,6 +40,19 @@ func (q *Queries) CreateAccount(ctx context.Context, arg CreateAccountParams) (A
 	return i, err
 }
 
+const createAnimalType = `-- name: CreateAnimalType :one
+INSERT INTO "AnimalType" ("value", deleted)
+VALUES ($1, false)
+RETURNING id, value, deleted
+`
+
+func (q *Queries) CreateAnimalType(ctx context.Context, value string) (AnimalType, error) {
+	row := q.db.QueryRowContext(ctx, createAnimalType, value)
+	var i AnimalType
+	err := row.Scan(&i.ID, &i.Value, &i.Deleted)
+	return i, err
+}
+
 const createLocation = `-- name: CreateLocation :one
 INSERT INTO "LocationPoint" (latitude, longitude, deleted)
 VALUES ($1, $2, false)
@@ -305,6 +318,22 @@ SELECT EXISTS (
 
 func (q *Queries) IsExistAnimalTypeByID(ctx context.Context, id int64) (bool, error) {
 	row := q.db.QueryRowContext(ctx, isExistAnimalTypeByID, id)
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
+}
+
+const isExistAnimalTypeByType = `-- name: IsExistAnimalTypeByType :one
+SELECT EXISTS (
+  SELECT 1
+  FROM "AnimalType"
+  WHERE "value"=$1
+  AND deleted=false
+)
+`
+
+func (q *Queries) IsExistAnimalTypeByType(ctx context.Context, value string) (bool, error) {
+	row := q.db.QueryRowContext(ctx, isExistAnimalTypeByType, value)
 	var exists bool
 	err := row.Scan(&exists)
 	return exists, err

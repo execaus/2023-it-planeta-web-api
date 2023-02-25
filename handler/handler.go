@@ -42,6 +42,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		animalType := animal.Group("/types")
 		{
 			animalType.GET("/:typeId", h.getAnimalType)
+			animalType.POST("", h.createAnimalType)
 		}
 	}
 

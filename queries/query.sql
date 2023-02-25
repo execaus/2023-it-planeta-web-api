@@ -60,6 +60,19 @@ SELECT EXISTS (
   AND deleted=false
 );
 
+-- name: IsExistAnimalTypeByType :one
+SELECT EXISTS (
+  SELECT 1
+  FROM "AnimalType"
+  WHERE "value"=$1
+  AND deleted=false
+);
+
+-- name: CreateAnimalType :one
+INSERT INTO "AnimalType" ("value", deleted)
+VALUES ($1, false)
+RETURNING *;
+
 -- name: GetAnimalTypeByID :one
 SELECT *
 FROM "AnimalType"

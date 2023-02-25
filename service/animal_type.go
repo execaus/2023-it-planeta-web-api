@@ -9,12 +9,20 @@ type AnimalTypeService struct {
 	repo repository.AnimalType
 }
 
-func (s *AnimalTypeService) IsExist(id int64) (bool, error) {
-	return s.repo.IsExist(id)
+func (s *AnimalTypeService) IsExistByType(animalType string) (bool, error) {
+	return s.repo.IsExistByType(animalType)
 }
 
-func (s *AnimalTypeService) GetById(id int64) (*queries.AnimalType, error) {
-	return s.repo.GetById(id)
+func (s *AnimalTypeService) Create(animalType string) (*queries.AnimalType, error) {
+	return s.repo.Create(animalType)
+}
+
+func (s *AnimalTypeService) IsExistByID(id int64) (bool, error) {
+	return s.repo.IsExistByID(id)
+}
+
+func (s *AnimalTypeService) GetByID(id int64) (*queries.AnimalType, error) {
+	return s.repo.GetByID(id)
 }
 
 func (s *AnimalTypeService) GetByAnimalID(id int64) ([]queries.AnimalToType, error) {

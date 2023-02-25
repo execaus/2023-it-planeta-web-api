@@ -21,8 +21,10 @@ type Animal interface {
 
 type AnimalType interface {
 	GetByAnimalID(id int64) ([]queries.AnimalToType, error)
-	IsExist(id int64) (bool, error)
-	GetById(id int64) (*queries.AnimalType, error)
+	IsExistByID(id int64) (bool, error)
+	IsExistByType(animalType string) (bool, error)
+	Create(animalType string) (*queries.AnimalType, error)
+	GetByID(id int64) (*queries.AnimalType, error)
 }
 
 type Location interface {
