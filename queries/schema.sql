@@ -47,10 +47,9 @@ CREATE TABLE "LocationPoint" (
 );
 
 CREATE TABLE "AnimalToType" (
-    "id" bigserial NOT NULL,
     "animal" bigint NOT NULL,
-    "type" bigint NOT NULL,
-    CONSTRAINT "AnimalToType_pk" PRIMARY KEY ("id")
+    "animal_type" bigint NOT NULL,
+    CONSTRAINT "AnimalToType_pk" PRIMARY KEY ("animal", "type")
 ) WITH (
   OIDS=FALSE
 );

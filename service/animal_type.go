@@ -9,6 +9,15 @@ type AnimalTypeService struct {
 	repo repository.AnimalType
 }
 
+func (s *AnimalTypeService) IsLinkedAnimal(id int64) (bool, error) {
+	return s.repo.IsLinkedAnimal(id)
+}
+
+func (s *AnimalTypeService) Remove(id int64) error {
+	_, err := s.repo.Remove(id)
+	return err
+}
+
 func (s *AnimalTypeService) Update(id int64, animalType string) (*queries.AnimalType, error) {
 	params := queries.UpdateAnimalTypeParams{
 		Value: animalType,

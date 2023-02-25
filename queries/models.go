@@ -41,9 +41,8 @@ type AnimalLifeStatus struct {
 }
 
 type AnimalToType struct {
-	ID     int64
-	Animal int64
-	Type   int64
+	Animal     int64
+	AnimalType int64
 }
 
 type AnimalType struct {

@@ -118,3 +118,40 @@ func (h *Handler) updateAnimalType(c *gin.Context) {
 
 	h.sendCreatedWithBody(c, output)
 }
+
+func (h *Handler) removeAnimalType(c *gin.Context) {
+	id, err := getParamID(c, "typeId")
+	if err != nil {
+		h.sendBadRequest(c, err.Error())
+		return
+	}
+
+	isExist, err := h.services.AnimalType.IsExistByID(id)
+	if err != nil {
+		h.sendInternalServerError(c)
+		return
+	}
+
+	if !isExist {
+		h.sendNotFound(c)
+		return
+	}
+
+	isLinked, err := h.services.AnimalType.IsLinkedAnimal(id)
+	if err != nil {
+		h.sendInternalServerError(c)
+		return
+	}
+
+	if isLinked {
+		h.sendBadRequest(c, "the animal type is linked with the animal")
+		return
+	}
+
+	if err = h.services.AnimalType.Remove(id); err != nil {
+		h.sendInternalServerError(c)
+		return
+	}
+
+	h.sendOk(c)
+}

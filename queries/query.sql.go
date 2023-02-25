@@ -11,7 +11,9 @@ import (
 )
 
 const createAccount = `-- name: CreateAccount :one
-INSERT INTO "Account" (first_name, last_name, email, password, deleted) VALUES ($1, $2, $3, $4, false) RETURNING id, first_name, last_name, email, password, deleted
+INSERT INTO "Account" (first_name, last_name, email, password, deleted)
+VALUES ($1, $2, $3, $4, false)
+RETURNING id, first_name, last_name, email, password, deleted
 `
 
 type CreateAccountParams struct {
@@ -192,7 +194,7 @@ func (q *Queries) GetAnimalTypeByID(ctx context.Context, id int64) (AnimalType, 
 }
 
 const getAnimalTypesByAnimalID = `-- name: GetAnimalTypesByAnimalID :many
-SELECT id, animal, type
+SELECT animal, animal_type
 FROM "AnimalToType"
 WHERE animal=$1
 `
@@ -206,7 +208,7 @@ func (q *Queries) GetAnimalTypesByAnimalID(ctx context.Context, animal int64) ([
 	var items []AnimalToType
 	for rows.Next() {
 		var i AnimalToType
-		if err := rows.Scan(&i.ID, &i.Animal, &i.Type); err != nil {
+		if err := rows.Scan(&i.Animal, &i.AnimalType); err != nil {
 			return nil, err
 		}
 		items = append(items, i)
@@ -273,6 +275,21 @@ func (q *Queries) GetVisitedLocationByAnimalID(ctx context.Context, animal int64
 		return nil, err
 	}
 	return items, nil
+}
+
+const isAnimalTypeLinkedAnimal = `-- name: IsAnimalTypeLinkedAnimal :one
+SELECT EXISTS (
+  SELECT 1
+  FROM "AnimalToType"
+  WHERE animal_type=$1
+)
+`
+
+func (q *Queries) IsAnimalTypeLinkedAnimal(ctx context.Context, animalType int64) (bool, error) {
+	row := q.db.QueryRowContext(ctx, isAnimalTypeLinkedAnimal, animalType)
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
 }
 
 const isExistAccountByEmail = `-- name: IsExistAccountByEmail :one
@@ -421,6 +438,20 @@ func (q *Queries) RemoveAccount(ctx context.Context, id int64) (Account, error) 
 		&i.Password,
 		&i.Deleted,
 	)
+	return i, err
+}
+
+const removeAnimalType = `-- name: RemoveAnimalType :one
+UPDATE "AnimalType"
+SET deleted=true
+WHERE id=$1
+RETURNING id, value, deleted
+`
+
+func (q *Queries) RemoveAnimalType(ctx context.Context, id int64) (AnimalType, error) {
+	row := q.db.QueryRowContext(ctx, removeAnimalType, id)
+	var i AnimalType
+	err := row.Scan(&i.ID, &i.Value, &i.Deleted)
 	return i, err
 }
 

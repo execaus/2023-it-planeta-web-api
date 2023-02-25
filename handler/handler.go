@@ -44,6 +44,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 			animalType.GET("/:typeId", h.getAnimalType)
 			animalType.POST("", h.createAnimalType)
 			animalType.PUT("/:typeId", h.updateAnimalType)
+			animalType.DELETE("/:typeId", h.removeAnimalType)
 		}
 	}
 

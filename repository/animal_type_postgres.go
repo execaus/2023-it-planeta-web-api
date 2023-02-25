@@ -10,6 +10,25 @@ type AnimalTypePostgres struct {
 	db *queries.Queries
 }
 
+func (r *AnimalTypePostgres) IsLinkedAnimal(id int64) (bool, error) {
+	isLinked, err := r.db.IsAnimalTypeLinkedAnimal(context.Background(), id)
+	if err != nil {
+		logrus.Error(err.Error())
+		return false, err
+	}
+
+	return isLinked, nil
+}
+
+func (r *AnimalTypePostgres) Remove(id int64) (*queries.AnimalType, error) {
+	animalTypeRow, err := r.db.RemoveAnimalType(context.Background(), id)
+	if err != nil {
+		logrus.Error(err.Error())
+		return nil, err
+	}
+	return &animalTypeRow, nil
+}
+
 func (r *AnimalTypePostgres) Update(params *queries.UpdateAnimalTypeParams) (*queries.AnimalType, error) {
 	animalTypeRow, err := r.db.UpdateAnimalType(context.Background(), *params)
 	if err != nil {

@@ -1,5 +1,7 @@
 -- name: CreateAccount :one
-INSERT INTO "Account" (first_name, last_name, email, password, deleted) VALUES ($1, $2, $3, $4, false) RETURNING *;
+INSERT INTO "Account" (first_name, last_name, email, password, deleted)
+VALUES ($1, $2, $3, $4, false)
+RETURNING *;
 
 -- name: IsExistAccountByEmail :one
 SELECT EXISTS (
@@ -88,6 +90,19 @@ WHERE id=$1;
 SELECT *
 FROM "AnimalToType"
 WHERE animal=$1;
+
+-- name: IsAnimalTypeLinkedAnimal :one
+SELECT EXISTS (
+  SELECT 1
+  FROM "AnimalToType"
+  WHERE animal_type=$1
+);
+
+-- name: RemoveAnimalType :one
+UPDATE "AnimalType"
+SET deleted=true
+WHERE id=$1
+RETURNING *;
 
 -- name: GetVisitedLocationByAnimalID :many
 SELECT *
