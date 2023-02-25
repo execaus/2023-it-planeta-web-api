@@ -52,6 +52,19 @@ FROM "Animal"
 WHERE id=$1
 AND deleted=false;
 
+-- name: IsExistAnimalTypeByID :one
+SELECT EXISTS (
+  SELECT 1
+  FROM "AnimalType"
+  WHERE id=$1
+  AND deleted=false
+);
+
+-- name: GetAnimalTypeByID :one
+SELECT *
+FROM "AnimalType"
+WHERE id=$1;
+
 -- name: GetAnimalTypesByAnimalID :many
 SELECT *
 FROM "AnimalToType"

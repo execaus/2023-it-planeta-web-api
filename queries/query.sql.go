@@ -165,6 +165,19 @@ func (q *Queries) GetAnimal(ctx context.Context, id int64) (Animal, error) {
 	return i, err
 }
 
+const getAnimalTypeByID = `-- name: GetAnimalTypeByID :one
+SELECT id, value, deleted
+FROM "AnimalType"
+WHERE id=$1
+`
+
+func (q *Queries) GetAnimalTypeByID(ctx context.Context, id int64) (AnimalType, error) {
+	row := q.db.QueryRowContext(ctx, getAnimalTypeByID, id)
+	var i AnimalType
+	err := row.Scan(&i.ID, &i.Value, &i.Deleted)
+	return i, err
+}
+
 const getAnimalTypesByAnimalID = `-- name: GetAnimalTypesByAnimalID :many
 SELECT id, animal, type
 FROM "AnimalToType"
@@ -276,6 +289,22 @@ SELECT EXISTS (
 
 func (q *Queries) IsExistAccountByID(ctx context.Context, id int64) (bool, error) {
 	row := q.db.QueryRowContext(ctx, isExistAccountByID, id)
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
+}
+
+const isExistAnimalTypeByID = `-- name: IsExistAnimalTypeByID :one
+SELECT EXISTS (
+  SELECT 1
+  FROM "AnimalType"
+  WHERE id=$1
+  AND deleted=false
+)
+`
+
+func (q *Queries) IsExistAnimalTypeByID(ctx context.Context, id int64) (bool, error) {
+	row := q.db.QueryRowContext(ctx, isExistAnimalTypeByID, id)
 	var exists bool
 	err := row.Scan(&exists)
 	return exists, err

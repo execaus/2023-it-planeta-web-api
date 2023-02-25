@@ -35,9 +35,14 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		location.DELETE("/:pointId", h.removeLocation)
 	}
 
-	animals := router.Group("/animals")
+	animal := router.Group("/animals")
 	{
-		animals.GET("/:animalId", h.getAnimal)
+		animal.GET("/:animalId", h.getAnimal)
+
+		animalType := animal.Group("/types")
+		{
+			animalType.GET("/:typeId", h.getAnimalType)
+		}
 	}
 
 	return router
