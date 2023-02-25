@@ -28,9 +28,10 @@ CREATE TABLE "Animal" (
 );
 
 CREATE TABLE "AnimalType" (
+    "id" bigserial NOT NULL,
     "value" character varying NOT NULL,
     "deleted" boolean NOT NULL,
-    CONSTRAINT "AnimalType_pk" PRIMARY KEY ("value")
+    CONSTRAINT "AnimalType_pk" PRIMARY KEY ("id")
 ) WITH (
   OIDS=FALSE
 );
@@ -48,7 +49,7 @@ CREATE TABLE "LocationPoint" (
 CREATE TABLE "AnimalToType" (
     "id" bigserial NOT NULL,
     "animal" bigint NOT NULL,
-    "type" character varying NOT NULL,
+    "type" bigint NOT NULL,
     CONSTRAINT "AnimalToType_pk" PRIMARY KEY ("id")
 ) WITH (
   OIDS=FALSE
@@ -85,7 +86,7 @@ ALTER TABLE "Animal" ADD CONSTRAINT "Animal_fk2" FOREIGN KEY ("life_status") REF
 ALTER TABLE "Animal" ADD CONSTRAINT "Animal_fk3" FOREIGN KEY ("chipper") REFERENCES "Account"("id");
 
 ALTER TABLE "AnimalToType" ADD CONSTRAINT "AnimalToType_fk0" FOREIGN KEY ("animal") REFERENCES "Animal"("id");
-ALTER TABLE "AnimalToType" ADD CONSTRAINT "AnimalToType_fk1" FOREIGN KEY ("type") REFERENCES "AnimalType"("value");
+ALTER TABLE "AnimalToType" ADD CONSTRAINT "AnimalToType_fk1" FOREIGN KEY ("type") REFERENCES "AnimalType"("id");
 
 ALTER TABLE "AnimalVisitedLocation" ADD CONSTRAINT "AnimalVisitedLocation_fk0" FOREIGN KEY ("location") REFERENCES "LocationPoint"("id");
 ALTER TABLE "AnimalVisitedLocation" ADD CONSTRAINT "AnimalVisitedLocation_fk1" FOREIGN KEY ("animal") REFERENCES "Animal"("id");
