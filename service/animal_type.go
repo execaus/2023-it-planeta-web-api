@@ -9,6 +9,14 @@ type AnimalTypeService struct {
 	repo repository.AnimalType
 }
 
+func (s *AnimalTypeService) Update(id int64, animalType string) (*queries.AnimalType, error) {
+	params := queries.UpdateAnimalTypeParams{
+		Value: animalType,
+		ID:    id,
+	}
+	return s.repo.Update(&params)
+}
+
 func (s *AnimalTypeService) IsExistByType(animalType string) (bool, error) {
 	return s.repo.IsExistByType(animalType)
 }

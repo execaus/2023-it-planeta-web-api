@@ -73,6 +73,12 @@ INSERT INTO "AnimalType" ("value", deleted)
 VALUES ($1, false)
 RETURNING *;
 
+-- name: UpdateAnimalType :one
+UPDATE "AnimalType"
+SET "value"=$1
+WHERE id=$2
+RETURNING *;
+
 -- name: GetAnimalTypeByID :one
 SELECT *
 FROM "AnimalType"

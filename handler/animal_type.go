@@ -69,3 +69,52 @@ func (h *Handler) createAnimalType(c *gin.Context) {
 
 	h.sendCreatedWithBody(c, output)
 }
+
+func (h *Handler) updateAnimalType(c *gin.Context) {
+	id, err := getParamID(c, "typeId")
+	if err != nil {
+		h.sendBadRequest(c, err.Error())
+		return
+	}
+
+	isExist, err := h.services.AnimalType.IsExistByID(id)
+	if err != nil {
+		h.sendInternalServerError(c)
+		return
+	}
+
+	if !isExist {
+		h.sendNotFound(c)
+		return
+	}
+
+	var input models.UpdateAnimalTypeInput
+	if err = c.BindJSON(&input); err != nil {
+		h.sendBadRequest(c, err.Error())
+		return
+	}
+
+	isExist, err = h.services.AnimalType.IsExistByType(input.Type)
+	if err != nil {
+		h.sendInternalServerError(c)
+		return
+	}
+
+	if !isExist {
+		h.sendConflict(c)
+		return
+	}
+
+	animalType, err := h.services.AnimalType.Update(id, input.Type)
+	if err != nil {
+		h.sendInternalServerError(c)
+		return
+	}
+
+	output := &models.UpdateAnimalTypeOutput{
+		ID:   animalType.ID,
+		Type: animalType.Value,
+	}
+
+	h.sendCreatedWithBody(c, output)
+}

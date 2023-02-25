@@ -10,6 +10,15 @@ type AnimalTypePostgres struct {
 	db *queries.Queries
 }
 
+func (r *AnimalTypePostgres) Update(params *queries.UpdateAnimalTypeParams) (*queries.AnimalType, error) {
+	animalTypeRow, err := r.db.UpdateAnimalType(context.Background(), *params)
+	if err != nil {
+		logrus.Error(err.Error())
+		return nil, err
+	}
+	return &animalTypeRow, nil
+}
+
 func (r *AnimalTypePostgres) IsExistByType(animalType string) (bool, error) {
 	isExist, err := r.db.IsExistAnimalTypeByType(context.Background(), animalType)
 	if err != nil {

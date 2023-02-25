@@ -13,3 +13,12 @@ type CreateAnimalTypeOutput struct {
 	ID   int64  `json:"id"`
 	Type string `json:"type"`
 }
+
+type UpdateAnimalTypeInput struct {
+	Type string `json:"type" binding:"required,excludesall=' ',printascii"`
+}
+
+type UpdateAnimalTypeOutput struct {
+	ID   int64  `json:"id"`
+	Type string `json:"type"`
+}

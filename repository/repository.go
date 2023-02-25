@@ -25,6 +25,7 @@ type AnimalType interface {
 	IsExistByType(animalType string) (bool, error)
 	Create(animalType string) (*queries.AnimalType, error)
 	GetByID(id int64) (*queries.AnimalType, error)
+	Update(params *queries.UpdateAnimalTypeParams) (*queries.AnimalType, error)
 }
 
 type Location interface {

@@ -479,6 +479,25 @@ func (q *Queries) UpdateAccount(ctx context.Context, arg UpdateAccountParams) (A
 	return i, err
 }
 
+const updateAnimalType = `-- name: UpdateAnimalType :one
+UPDATE "AnimalType"
+SET "value"=$1
+WHERE id=$2
+RETURNING id, value, deleted
+`
+
+type UpdateAnimalTypeParams struct {
+	Value string
+	ID    int64
+}
+
+func (q *Queries) UpdateAnimalType(ctx context.Context, arg UpdateAnimalTypeParams) (AnimalType, error) {
+	row := q.db.QueryRowContext(ctx, updateAnimalType, arg.Value, arg.ID)
+	var i AnimalType
+	err := row.Scan(&i.ID, &i.Value, &i.Deleted)
+	return i, err
+}
+
 const updateLocation = `-- name: UpdateLocation :one
 UPDATE "LocationPoint"
 SET latitude=$1, longitude=$2
