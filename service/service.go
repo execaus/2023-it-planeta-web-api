@@ -18,6 +18,10 @@ type Account interface {
 
 type Animal interface {
 	Get(id int64) (*queries.Animal, error)
+	IsDead(id int64) (bool, error)
+	GetChippingLocation(animalID int64) (*queries.LocationPoint, error)
+	GetCurrentLocation(animalID int64) (*queries.AnimalVisitedLocation, error)
+	CreateVisitedLocation(animalID int64, pointID int64) (*queries.AnimalVisitedLocation, error)
 }
 
 type AnimalType interface {

@@ -33,7 +33,7 @@ func (h *Handler) registrationAccount(c *gin.Context) {
 }
 
 func (h *Handler) getAccount(c *gin.Context) {
-	id, err := getParamID(c, "accountId")
+	id, err := getNumberParam(c, "accountId")
 	if err != nil {
 		h.sendBadRequest(c, err.Error())
 		return
@@ -92,7 +92,7 @@ func (h *Handler) getAccounts(c *gin.Context) {
 }
 
 func (h *Handler) updateAccount(c *gin.Context) {
-	id, err := getParamID(c, "accountId")
+	id, err := getNumberParam(c, "accountId")
 	if err != nil {
 		h.sendBadRequest(c, err.Error())
 		return
@@ -144,7 +144,7 @@ func (h *Handler) updateAccount(c *gin.Context) {
 }
 
 func (h *Handler) deleteAccount(c *gin.Context) {
-	id, err := getParamID(c, "accountId")
+	id, err := getNumberParam(c, "accountId")
 	if err != nil {
 		h.sendBadRequest(c, err.Error())
 		return

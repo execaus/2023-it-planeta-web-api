@@ -6,7 +6,7 @@ import (
 )
 
 func (h *Handler) getAnimalType(c *gin.Context) {
-	id, err := getParamID(c, "typeId")
+	id, err := getNumberParam(c, "typeId")
 	if err != nil {
 		h.sendBadRequest(c, err.Error())
 		return
@@ -71,7 +71,7 @@ func (h *Handler) createAnimalType(c *gin.Context) {
 }
 
 func (h *Handler) updateAnimalType(c *gin.Context) {
-	id, err := getParamID(c, "typeId")
+	id, err := getNumberParam(c, "typeId")
 	if err != nil {
 		h.sendBadRequest(c, err.Error())
 		return
@@ -120,7 +120,7 @@ func (h *Handler) updateAnimalType(c *gin.Context) {
 }
 
 func (h *Handler) removeAnimalType(c *gin.Context) {
-	id, err := getParamID(c, "typeId")
+	id, err := getNumberParam(c, "typeId")
 	if err != nil {
 		h.sendBadRequest(c, err.Error())
 		return

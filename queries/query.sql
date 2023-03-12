@@ -159,3 +159,20 @@ UPDATE "LocationPoint"
 SET deleted=true
 WHERE id=$1
 RETURNING *;
+
+-- name: GetChippingLocation :one
+SELECT "LocationPoint".*
+FROM "Animal"
+JOIN "LocationPoint" ON "Animal".chipping_location = "LocationPoint".id AND "Animal".id=$1;
+
+-- name: GetCurrentLocation :one
+SELECT *
+FROM "AnimalVisitedLocation"
+WHERE animal=$1 ORDER BY "date" DESC
+LIMIT 1;
+
+-- name: CreateVisitedLocation :one
+INSERT INTO
+"AnimalVisitedLocation" (location, animal, date, deleted)
+VALUES ($1, $2, now(), false)
+RETURNING *;

@@ -6,7 +6,7 @@ import (
 )
 
 func (h *Handler) getAnimal(c *gin.Context) {
-	id, err := getParamID(c, "animalId")
+	id, err := getNumberParam(c, "animalId")
 	if err != nil {
 		h.sendBadRequest(c, err.Error())
 		return
@@ -32,7 +32,7 @@ func (h *Handler) getAnimal(c *gin.Context) {
 
 	animalTypesID := make([]int64, len(animalTypes))
 	for i, animalType := range animalTypes {
-		animalTypesID[i] = animalType.ID
+		animalTypesID[i] = animalType.AnimalType
 	}
 
 	visitedLocationsID := make([]int64, len(visitedLocations))

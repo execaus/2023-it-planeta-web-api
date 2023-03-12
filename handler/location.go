@@ -6,7 +6,7 @@ import (
 )
 
 func (h *Handler) getLocation(c *gin.Context) {
-	id, err := getParamID(c, "pointId")
+	id, err := getNumberParam(c, "pointId")
 	if err != nil {
 		h.sendBadRequest(c, err.Error())
 		return
@@ -72,7 +72,7 @@ func (h *Handler) createLocation(c *gin.Context) {
 }
 
 func (h *Handler) updateLocation(c *gin.Context) {
-	id, err := getParamID(c, "pointId")
+	id, err := getNumberParam(c, "pointId")
 	if err != nil {
 		h.sendBadRequest(c, err.Error())
 		return
@@ -122,7 +122,7 @@ func (h *Handler) updateLocation(c *gin.Context) {
 }
 
 func (h *Handler) removeLocation(c *gin.Context) {
-	id, err := getParamID(c, "pointId")
+	id, err := getNumberParam(c, "pointId")
 	if err != nil {
 		h.sendBadRequest(c, err.Error())
 		return

@@ -78,6 +78,31 @@ func (q *Queries) CreateLocation(ctx context.Context, arg CreateLocationParams) 
 	return i, err
 }
 
+const createVisitedLocation = `-- name: CreateVisitedLocation :one
+INSERT INTO
+"AnimalVisitedLocation" (location, animal, date, deleted)
+VALUES ($1, $2, now(), false)
+RETURNING id, location, animal, date, deleted
+`
+
+type CreateVisitedLocationParams struct {
+	Location int64
+	Animal   int64
+}
+
+func (q *Queries) CreateVisitedLocation(ctx context.Context, arg CreateVisitedLocationParams) (AnimalVisitedLocation, error) {
+	row := q.db.QueryRowContext(ctx, createVisitedLocation, arg.Location, arg.Animal)
+	var i AnimalVisitedLocation
+	err := row.Scan(
+		&i.ID,
+		&i.Location,
+		&i.Animal,
+		&i.Date,
+		&i.Deleted,
+	)
+	return i, err
+}
+
 const getAccount = `-- name: GetAccount :one
 SELECT id, first_name, last_name, email, password, deleted
 FROM "Account"
@@ -220,6 +245,44 @@ func (q *Queries) GetAnimalTypesByAnimalID(ctx context.Context, animal int64) ([
 		return nil, err
 	}
 	return items, nil
+}
+
+const getChippingLocation = `-- name: GetChippingLocation :one
+SELECT "LocationPoint".id, "LocationPoint".latitude, "LocationPoint".longitude, "LocationPoint".deleted
+FROM "Animal"
+JOIN "LocationPoint" ON "Animal".chipping_location = "LocationPoint".id AND "Animal".id=$1
+`
+
+func (q *Queries) GetChippingLocation(ctx context.Context, id int64) (LocationPoint, error) {
+	row := q.db.QueryRowContext(ctx, getChippingLocation, id)
+	var i LocationPoint
+	err := row.Scan(
+		&i.ID,
+		&i.Latitude,
+		&i.Longitude,
+		&i.Deleted,
+	)
+	return i, err
+}
+
+const getCurrentLocation = `-- name: GetCurrentLocation :one
+SELECT id, location, animal, date, deleted
+FROM "AnimalVisitedLocation"
+WHERE animal=$1 ORDER BY "date" DESC
+LIMIT 1
+`
+
+func (q *Queries) GetCurrentLocation(ctx context.Context, animal int64) (AnimalVisitedLocation, error) {
+	row := q.db.QueryRowContext(ctx, getCurrentLocation, animal)
+	var i AnimalVisitedLocation
+	err := row.Scan(
+		&i.ID,
+		&i.Location,
+		&i.Animal,
+		&i.Date,
+		&i.Deleted,
+	)
+	return i, err
 }
 
 const getLocation = `-- name: GetLocation :one
