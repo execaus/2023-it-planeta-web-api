@@ -128,10 +128,10 @@ func (q *Queries) GetAccount(ctx context.Context, id int64) (Account, error) {
 const getAccounts = `-- name: GetAccounts :many
 SELECT id, first_name, last_name, email, password, deleted
 FROM "Account"
-WHERE (first_name IS NULL OR lower(first_name) LIKE lower('%' || $1 || '%'))
-AND (last_name IS NULL OR lower(last_name) LIKE lower('%' || $2 || '%'))
-AND (email IS NULL OR lower(email) LIKE lower('%' || $3 || '%'))
-AND deleted=false
+WHERE (lower(first_name) LIKE lower('%' || $1 || '%') OR first_name IS NOT DISTINCT FROM NULL)
+AND (lower(last_name) LIKE lower('%' || $2 || '%') OR last_name IS NOT DISTINCT FROM NULL)
+AND (lower(email) LIKE lower('%' || $3 || '%') OR email IS NOT DISTINCT FROM NULL)
+AND deleted = FALSE
 ORDER BY id DESC
 LIMIT $4 OFFSET $5
 `
@@ -235,6 +235,76 @@ func (q *Queries) GetAnimalTypesByAnimalID(ctx context.Context, animal int64) ([
 	for rows.Next() {
 		var i AnimalToType
 		if err := rows.Scan(&i.Animal, &i.AnimalType); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getAnimals = `-- name: GetAnimals :many
+SELECT id, chipping_location, weight, length, height, gender, life_status, chipping_date, chipper, death_date, deleted
+FROM "Animal"
+WHERE
+    ("chipping_date" >= COALESCE($1, "chipping_date"))
+    AND ("chipping_date" <= COALESCE($2, "chipping_date"))
+    AND ($3 IS NOT DISTINCT FROM "chipper" OR "chipper" = $3)
+    AND ($4 IS NOT DISTINCT FROM "chipping_location" OR "chipping_location" = $4)
+    AND ($5 IS NOT DISTINCT FROM "life_status" OR "life_status" = $5)
+    AND ($6 IS NOT DISTINCT FROM "gender" OR "gender" = $6)
+    AND "deleted" = FALSE
+ORDER BY "id"
+LIMIT $7 OFFSET $8
+`
+
+type GetAnimalsParams struct {
+	ChippingDate   time.Time
+	ChippingDate_2 time.Time
+	Column3        interface{}
+	Column4        interface{}
+	Column5        interface{}
+	Column6        interface{}
+	Limit          int32
+	Offset         int32
+}
+
+func (q *Queries) GetAnimals(ctx context.Context, arg GetAnimalsParams) ([]Animal, error) {
+	rows, err := q.db.QueryContext(ctx, getAnimals,
+		arg.ChippingDate,
+		arg.ChippingDate_2,
+		arg.Column3,
+		arg.Column4,
+		arg.Column5,
+		arg.Column6,
+		arg.Limit,
+		arg.Offset,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Animal
+	for rows.Next() {
+		var i Animal
+		if err := rows.Scan(
+			&i.ID,
+			&i.ChippingLocation,
+			&i.Weight,
+			&i.Length,
+			&i.Height,
+			&i.Gender,
+			&i.LifeStatus,
+			&i.ChippingDate,
+			&i.Chipper,
+			&i.DeathDate,
+			&i.Deleted,
+		); err != nil {
 			return nil, err
 		}
 		items = append(items, i)

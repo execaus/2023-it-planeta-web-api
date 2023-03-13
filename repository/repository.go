@@ -28,6 +28,7 @@ type Animal interface {
 	UpdateVisitedLocation(visitedLocationPointID int64, locationPointID int64) (*queries.AnimalVisitedLocation, error)
 	RemoveVisitedLocation(visitedLocationPointID int64) error
 	GetVisitedLocationList(params *queries.GetVisitedLocationListParams) ([]queries.AnimalVisitedLocation, error)
+	GetList(params *queries.GetAnimalsParams) ([]queries.Animal, error)
 }
 
 type AnimalType interface {

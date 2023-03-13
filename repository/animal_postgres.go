@@ -10,6 +10,16 @@ type AnimalPostgres struct {
 	db *queries.Queries
 }
 
+func (r *AnimalPostgres) GetList(params *queries.GetAnimalsParams) ([]queries.Animal, error) {
+	animals, err := r.db.GetAnimals(context.Background(), *params)
+	if err != nil {
+		logrus.Error(err.Error())
+		return nil, err
+	}
+
+	return animals, nil
+}
+
 func (r *AnimalPostgres) GetVisitedLocationList(
 	params *queries.GetVisitedLocationListParams) ([]queries.AnimalVisitedLocation, error) {
 	visitedLocations, err := r.db.GetVisitedLocationList(context.Background(), *params)

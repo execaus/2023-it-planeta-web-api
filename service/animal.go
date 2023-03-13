@@ -13,6 +13,48 @@ type AnimalService struct {
 	repo repository.Animal
 }
 
+func (s *AnimalService) GetList(input *models.GetAnimalsInput) ([]queries.Animal, error) {
+	var limit int32
+	var offset int32
+
+	if input.Size == nil {
+		limit = constants.VisitedLocationGetListDefaultLimit
+	} else {
+		limit = *input.Size
+	}
+
+	if input.From == nil {
+		offset = constants.VisitedLocationGetListDefaultOffset
+	} else {
+		offset = *input.From
+	}
+
+	startDateTime, err := time.Parse(time.RFC3339, *input.StartDateTime)
+	if err != nil {
+		logrus.Error(err.Error())
+		return nil, err
+	}
+
+	endDateTime, err := time.Parse(time.RFC3339, *input.EndDateTime)
+	if err != nil {
+		logrus.Error(err.Error())
+		return nil, err
+	}
+
+	params := queries.GetAnimalsParams{
+		ChippingDate:   startDateTime,
+		ChippingDate_2: endDateTime,
+		Column3:        input.ChipperID,
+		Column4:        input.ChippingLocationID,
+		Column5:        input.LifeStatus,
+		Column6:        input.Gender,
+		Limit:          limit,
+		Offset:         offset,
+	}
+
+	return s.repo.GetList(&params)
+}
+
 func (s *AnimalService) GetVisitedLocationList(
 	animalID int64,
 	input *models.GetVisitedLocationQueryParams) ([]queries.AnimalVisitedLocation, error) {
