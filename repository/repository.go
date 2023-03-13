@@ -20,6 +20,12 @@ type Animal interface {
 	GetChippingLocation(animalID int64) (*queries.LocationPoint, error)
 	GetCurrentLocation(animalID int64) (*queries.AnimalVisitedLocation, error)
 	CreateVisitedLocation(animalID int64, pointID int64) (*queries.AnimalVisitedLocation, error)
+	GetVisitedLocation(visitedPointID int64) (*queries.AnimalVisitedLocation, error)
+	GetVisitedLocations(animalID int64) ([]queries.AnimalVisitedLocation, error)
+	IsExistByID(animalID int64) (bool, error)
+	IsExistVisitedLocationByID(visitedLocationID int64) (bool, error)
+	IsLinkedVisitedLocation(animalID int64, visitedLocationPointID int64) (bool, error)
+	UpdateVisitedLocation(visitedLocationPointID int64, locationPointID int64) (*queries.AnimalVisitedLocation, error)
 }
 
 type AnimalType interface {

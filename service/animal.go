@@ -11,6 +11,32 @@ type AnimalService struct {
 	repo repository.Animal
 }
 
+func (s *AnimalService) UpdateVisitedLocation(
+	visitedLocationPointID int64,
+	locationPointID int64) (*queries.AnimalVisitedLocation, error) {
+	return s.repo.UpdateVisitedLocation(visitedLocationPointID, locationPointID)
+}
+
+func (s *AnimalService) IsLinkedVisitedLocation(animalID int64, visitedLocationPointID int64) (bool, error) {
+	return s.repo.IsLinkedVisitedLocation(animalID, visitedLocationPointID)
+}
+
+func (s *AnimalService) IsExistVisitedLocationByID(visitedLocationID int64) (bool, error) {
+	return s.repo.IsExistVisitedLocationByID(visitedLocationID)
+}
+
+func (s *AnimalService) IsExistByID(animalID int64) (bool, error) {
+	return s.repo.IsExistByID(animalID)
+}
+
+func (s *AnimalService) GetVisitedLocations(animalID int64) ([]queries.AnimalVisitedLocation, error) {
+	return s.repo.GetVisitedLocations(animalID)
+}
+
+func (s *AnimalService) GetVisitedLocation(visitedPointID int64) (*queries.AnimalVisitedLocation, error) {
+	return s.repo.GetVisitedLocation(visitedPointID)
+}
+
 func (s *AnimalService) CreateVisitedLocation(animalID int64, pointID int64) (*queries.AnimalVisitedLocation, error) {
 	return s.repo.CreateVisitedLocation(animalID, pointID)
 }

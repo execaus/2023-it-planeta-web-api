@@ -48,6 +48,14 @@ SET deleted=true
 WHERE id=$1
 RETURNING *;
 
+-- name: IsExistAnimalByID :one
+SELECT EXISTS (
+  SELECT 1
+  FROM "Animal"
+  WHERE id=$1
+  AND deleted=false
+);
+
 -- name: GetAnimal :one
 SELECT *
 FROM "Animal"
@@ -175,4 +183,38 @@ LIMIT 1;
 INSERT INTO
 "AnimalVisitedLocation" (location, animal, date, deleted)
 VALUES ($1, $2, now(), false)
+RETURNING *;
+
+-- name: GetVisitedLocation :one
+SELECT *
+FROM "AnimalVisitedLocation"
+WHERE id=$1;
+
+-- name: GetVisitedLocations :many
+SELECT *
+FROM "AnimalVisitedLocation"
+WHERE animal=$1;
+
+-- name: IsExistVisitedLocationByID :one
+SELECT EXISTS (
+  SELECT 1
+  FROM "AnimalVisitedLocation"
+  WHERE id=$1
+  AND deleted=false
+);
+
+-- name: IsLinkedAnimalToVisitedLocation :one
+SELECT EXISTS (
+  SELECT 1
+  FROM "AnimalVisitedLocation"
+  WHERE id=$1
+  AND animal=$2
+  AND deleted=false
+);
+
+-- name: UpdateVisitedLocation :one
+UPDATE "AnimalVisitedLocation"
+SET location=$1
+WHERE id=$2
+AND deleted=false
 RETURNING *;

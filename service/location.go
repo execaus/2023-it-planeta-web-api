@@ -9,6 +9,52 @@ type LocationService struct {
 	repo repository.Location
 }
 
+func (s *LocationService) IsSurroundedDuplicatesPoints(
+	visitedLocations []queries.AnimalVisitedLocation,
+	targetLocationID int64,
+) (bool, error) {
+	for i, visitedLocation := range visitedLocations {
+		if visitedLocation.Location != targetLocationID {
+			continue
+		}
+
+		targetLocationPoint, err := s.repo.Get(visitedLocation.Location)
+		if err != nil {
+			return false, err
+		}
+
+		if i-1 < len(visitedLocations) && i-1 != -1 {
+			prevVisitedLocation := visitedLocations[i-1]
+			locationPoint, err := s.repo.Get(prevVisitedLocation.Location)
+			if err != nil {
+				return false, err
+			}
+
+			if locationPoint.Longitude == targetLocationPoint.Longitude &&
+				locationPoint.Latitude == targetLocationPoint.Latitude {
+				return true, nil
+			}
+		}
+
+		if i+1 < len(visitedLocations) {
+			prevVisitedLocation := visitedLocations[i+1]
+			locationPoint, err := s.repo.Get(prevVisitedLocation.Location)
+			if err != nil {
+				return false, err
+			}
+
+			if locationPoint.Longitude == targetLocationPoint.Longitude &&
+				locationPoint.Latitude == targetLocationPoint.Latitude {
+				return true, nil
+			}
+		}
+
+		break
+	}
+
+	return false, nil
+}
+
 func (s *LocationService) Remove(id int64) error {
 	return s.repo.Remove(id)
 }

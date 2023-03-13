@@ -304,6 +304,25 @@ func (q *Queries) GetLocation(ctx context.Context, id int64) (LocationPoint, err
 	return i, err
 }
 
+const getVisitedLocation = `-- name: GetVisitedLocation :one
+SELECT id, location, animal, date, deleted
+FROM "AnimalVisitedLocation"
+WHERE id=$1
+`
+
+func (q *Queries) GetVisitedLocation(ctx context.Context, id int64) (AnimalVisitedLocation, error) {
+	row := q.db.QueryRowContext(ctx, getVisitedLocation, id)
+	var i AnimalVisitedLocation
+	err := row.Scan(
+		&i.ID,
+		&i.Location,
+		&i.Animal,
+		&i.Date,
+		&i.Deleted,
+	)
+	return i, err
+}
+
 const getVisitedLocationByAnimalID = `-- name: GetVisitedLocationByAnimalID :many
 SELECT id, location, animal, date, deleted
 FROM "AnimalVisitedLocation"
@@ -313,6 +332,41 @@ AND deleted=false
 
 func (q *Queries) GetVisitedLocationByAnimalID(ctx context.Context, animal int64) ([]AnimalVisitedLocation, error) {
 	rows, err := q.db.QueryContext(ctx, getVisitedLocationByAnimalID, animal)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []AnimalVisitedLocation
+	for rows.Next() {
+		var i AnimalVisitedLocation
+		if err := rows.Scan(
+			&i.ID,
+			&i.Location,
+			&i.Animal,
+			&i.Date,
+			&i.Deleted,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getVisitedLocations = `-- name: GetVisitedLocations :many
+SELECT id, location, animal, date, deleted
+FROM "AnimalVisitedLocation"
+WHERE animal=$1
+`
+
+func (q *Queries) GetVisitedLocations(ctx context.Context, animal int64) ([]AnimalVisitedLocation, error) {
+	rows, err := q.db.QueryContext(ctx, getVisitedLocations, animal)
 	if err != nil {
 		return nil, err
 	}
@@ -387,6 +441,22 @@ func (q *Queries) IsExistAccountByID(ctx context.Context, id int64) (bool, error
 	return exists, err
 }
 
+const isExistAnimalByID = `-- name: IsExistAnimalByID :one
+SELECT EXISTS (
+  SELECT 1
+  FROM "Animal"
+  WHERE id=$1
+  AND deleted=false
+)
+`
+
+func (q *Queries) IsExistAnimalByID(ctx context.Context, id int64) (bool, error) {
+	row := q.db.QueryRowContext(ctx, isExistAnimalByID, id)
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
+}
+
 const isExistAnimalTypeByID = `-- name: IsExistAnimalTypeByID :one
 SELECT EXISTS (
   SELECT 1
@@ -452,6 +522,44 @@ SELECT EXISTS (
 
 func (q *Queries) IsExistLocationByID(ctx context.Context, id int64) (bool, error) {
 	row := q.db.QueryRowContext(ctx, isExistLocationByID, id)
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
+}
+
+const isExistVisitedLocationByID = `-- name: IsExistVisitedLocationByID :one
+SELECT EXISTS (
+  SELECT 1
+  FROM "AnimalVisitedLocation"
+  WHERE id=$1
+  AND deleted=false
+)
+`
+
+func (q *Queries) IsExistVisitedLocationByID(ctx context.Context, id int64) (bool, error) {
+	row := q.db.QueryRowContext(ctx, isExistVisitedLocationByID, id)
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
+}
+
+const isLinkedAnimalToVisitedLocation = `-- name: IsLinkedAnimalToVisitedLocation :one
+SELECT EXISTS (
+  SELECT 1
+  FROM "AnimalVisitedLocation"
+  WHERE id=$1
+  AND animal=$2
+  AND deleted=false
+)
+`
+
+type IsLinkedAnimalToVisitedLocationParams struct {
+	ID     int64
+	Animal int64
+}
+
+func (q *Queries) IsLinkedAnimalToVisitedLocation(ctx context.Context, arg IsLinkedAnimalToVisitedLocationParams) (bool, error) {
+	row := q.db.QueryRowContext(ctx, isLinkedAnimalToVisitedLocation, arg.ID, arg.Animal)
 	var exists bool
 	err := row.Scan(&exists)
 	return exists, err
@@ -612,6 +720,32 @@ func (q *Queries) UpdateLocation(ctx context.Context, arg UpdateLocationParams) 
 		&i.ID,
 		&i.Latitude,
 		&i.Longitude,
+		&i.Deleted,
+	)
+	return i, err
+}
+
+const updateVisitedLocation = `-- name: UpdateVisitedLocation :one
+UPDATE "AnimalVisitedLocation"
+SET location=$1
+WHERE id=$2
+AND deleted=false
+RETURNING id, location, animal, date, deleted
+`
+
+type UpdateVisitedLocationParams struct {
+	Location int64
+	ID       int64
+}
+
+func (q *Queries) UpdateVisitedLocation(ctx context.Context, arg UpdateVisitedLocationParams) (AnimalVisitedLocation, error) {
+	row := q.db.QueryRowContext(ctx, updateVisitedLocation, arg.Location, arg.ID)
+	var i AnimalVisitedLocation
+	err := row.Scan(
+		&i.ID,
+		&i.Location,
+		&i.Animal,
+		&i.Date,
 		&i.Deleted,
 	)
 	return i, err

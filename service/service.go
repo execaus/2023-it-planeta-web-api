@@ -22,6 +22,12 @@ type Animal interface {
 	GetChippingLocation(animalID int64) (*queries.LocationPoint, error)
 	GetCurrentLocation(animalID int64) (*queries.AnimalVisitedLocation, error)
 	CreateVisitedLocation(animalID int64, pointID int64) (*queries.AnimalVisitedLocation, error)
+	GetVisitedLocation(visitedPointID int64) (*queries.AnimalVisitedLocation, error)
+	GetVisitedLocations(animalID int64) ([]queries.AnimalVisitedLocation, error)
+	IsExistByID(animalID int64) (bool, error)
+	IsExistVisitedLocationByID(visitedLocationID int64) (bool, error)
+	IsLinkedVisitedLocation(animalID int64, visitedLocationPointID int64) (bool, error)
+	UpdateVisitedLocation(visitedLocationPointID int64, locationPointID int64) (*queries.AnimalVisitedLocation, error)
 }
 
 type AnimalType interface {
@@ -44,6 +50,7 @@ type Location interface {
 	Update(id int64, latitude float64, longitude float64) (*queries.LocationPoint, error)
 	IsLinkedAnimal(id int64) (bool, error)
 	Remove(id int64) error
+	IsSurroundedDuplicatesPoints(visitedLocations []queries.AnimalVisitedLocation, targetLocationID int64) (bool, error)
 }
 
 type Service struct {
