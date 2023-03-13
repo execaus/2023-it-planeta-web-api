@@ -10,6 +10,17 @@ type AnimalPostgres struct {
 	db *queries.Queries
 }
 
+func (r *AnimalPostgres) GetVisitedLocationList(
+	params *queries.GetVisitedLocationListParams) ([]queries.AnimalVisitedLocation, error) {
+	visitedLocations, err := r.db.GetVisitedLocationList(context.Background(), *params)
+	if err != nil {
+		logrus.Error(err.Error())
+		return nil, err
+	}
+
+	return visitedLocations, nil
+}
+
 func (r *AnimalPostgres) RemoveVisitedLocation(visitedLocationPointID int64) error {
 	_, err := r.db.RemoveVisitedLocation(context.Background(), visitedLocationPointID)
 	if err != nil {

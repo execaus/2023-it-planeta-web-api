@@ -6,6 +6,71 @@ import (
 	"time"
 )
 
+func (h *Handler) getVisitedLocation(c *gin.Context) {
+	var input models.GetVisitedLocationQueryParams
+
+	if err := c.ShouldBindQuery(&input); err != nil {
+		h.sendBadRequest(c, err.Error())
+		return
+	}
+
+	if input.From != nil && *input.From < 0 {
+		h.sendBadRequest(c, "invalid parameter from")
+		return
+	}
+
+	if input.Size != nil && *input.Size <= 0 {
+		h.sendBadRequest(c, "invalid parameter size")
+		return
+	}
+
+	if input.StartDateTime != nil && !IsISO8601Date(*input.StartDateTime) {
+		h.sendBadRequest(c, "invalid parameter start date time")
+		return
+	}
+
+	if input.EndDateTime != nil && !IsISO8601Date(*input.EndDateTime) {
+		h.sendBadRequest(c, "invalid parameter end date time")
+		return
+	}
+
+	animalID, err := getNumberParam(c, "animalId")
+	if err != nil {
+		h.sendBadRequest(c, err.Error())
+		return
+	}
+
+	// 404 Животное с animalId не найдено
+	isExistAnimal, err := h.services.Animal.IsExistByID(animalID)
+	if err != nil {
+		h.sendInternalServerError(c)
+		return
+	}
+
+	if !isExistAnimal {
+		h.sendNotFound(c)
+		return
+	}
+
+	visitedLocations, err := h.services.Animal.GetVisitedLocationList(animalID, &input)
+	if err != nil {
+		h.sendInternalServerError(c)
+		return
+	}
+
+	output := make([]*models.GetVisitedLocationOutput, len(visitedLocations))
+
+	for i, visitedLocation := range visitedLocations {
+		output[i] = &models.GetVisitedLocationOutput{
+			ID:                           visitedLocation.ID,
+			DateTimeOfVisitLocationPoint: convertDateToISO8601(visitedLocation.Date),
+			LocationPointID:              visitedLocation.Location,
+		}
+	}
+
+	h.sendOKWithBody(c, output)
+}
+
 func (h *Handler) createVisitedLocation(c *gin.Context) {
 	animalID, err := getNumberParam(c, "animalId")
 	if err != nil {

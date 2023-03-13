@@ -39,7 +39,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	{
 		visitedLocation := animal.Group("/:animalId/locations")
 		{
-			// visitedLocation.GET("", h.getVisitedLocation)
+			visitedLocation.GET("", h.getVisitedLocation)
 			visitedLocation.POST("/:pointId", h.createVisitedLocation)
 			visitedLocation.PUT("", h.updateVisitedLocation)
 			visitedLocation.DELETE("/:visitedPointId", h.removeVisitedLocation)

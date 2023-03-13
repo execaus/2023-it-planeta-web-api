@@ -8,6 +8,7 @@ package queries
 import (
 	"context"
 	"database/sql"
+	"time"
 )
 
 const createAccount = `-- name: CreateAccount :one
@@ -332,6 +333,61 @@ AND deleted=false
 
 func (q *Queries) GetVisitedLocationByAnimalID(ctx context.Context, animal int64) ([]AnimalVisitedLocation, error) {
 	rows, err := q.db.QueryContext(ctx, getVisitedLocationByAnimalID, animal)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []AnimalVisitedLocation
+	for rows.Next() {
+		var i AnimalVisitedLocation
+		if err := rows.Scan(
+			&i.ID,
+			&i.Location,
+			&i.Animal,
+			&i.Date,
+			&i.Deleted,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getVisitedLocationList = `-- name: GetVisitedLocationList :many
+SELECT id, location, animal, date, deleted
+FROM "AnimalVisitedLocation"
+WHERE "deleted" = false
+    AND "animal" = $1
+    AND ("date" >= COALESCE($2::TIMESTAMP, '1970-01-01'::TIMESTAMP))
+    AND ("date" <= COALESCE($3::TIMESTAMP, NOW()))
+ORDER BY "date" ASC
+OFFSET $4
+LIMIT $5
+`
+
+type GetVisitedLocationListParams struct {
+	Animal  int64
+	Column2 time.Time
+	Column3 time.Time
+	Offset  int32
+	Limit   int32
+}
+
+func (q *Queries) GetVisitedLocationList(ctx context.Context, arg GetVisitedLocationListParams) ([]AnimalVisitedLocation, error) {
+	rows, err := q.db.QueryContext(ctx, getVisitedLocationList,
+		arg.Animal,
+		arg.Column2,
+		arg.Column3,
+		arg.Offset,
+		arg.Limit,
+	)
 	if err != nil {
 		return nil, err
 	}

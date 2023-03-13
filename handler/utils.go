@@ -25,6 +25,11 @@ func convertNullDateToISO8601(date sql.NullTime) ctype.TimeOrNil {
 	return convertDateToISO8601(date.Time)
 }
 
+func IsISO8601Date(str string) bool {
+	_, err := time.Parse(time.RFC3339, str)
+	return err == nil
+}
+
 func getNumberParam(c *gin.Context, key string) (int64, error) {
 	stringID := c.Param(key)
 	if stringID == stringEmpty || stringID == stringNull {

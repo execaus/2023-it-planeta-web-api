@@ -1,16 +1,12 @@
 package service
 
 import (
+	"2023-it-planeta-web-api/constants"
 	"2023-it-planeta-web-api/models"
 	"2023-it-planeta-web-api/queries"
 	"2023-it-planeta-web-api/repository"
 	"database/sql"
 	"github.com/sirupsen/logrus"
-)
-
-const (
-	accountGetListDefaultLimit  = 10
-	accountGetListDefaultOffset = 0
 )
 
 type AccountService struct {
@@ -37,11 +33,11 @@ func (s *AccountService) GetList(input *models.GetAccountsInput) ([]*models.GetA
 	var offset int32
 
 	if input.Size == nil {
-		limit = accountGetListDefaultLimit
+		limit = constants.AccountGetListDefaultLimit
 	}
 
 	if input.From == nil {
-		offset = accountGetListDefaultOffset
+		offset = constants.AccountGetListDefaultOffset
 	}
 
 	params := &queries.GetAccountsParams{

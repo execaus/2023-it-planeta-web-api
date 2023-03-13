@@ -2,13 +2,66 @@ package service
 
 import (
 	"2023-it-planeta-web-api/constants"
+	"2023-it-planeta-web-api/models"
 	"2023-it-planeta-web-api/queries"
 	"2023-it-planeta-web-api/repository"
 	"github.com/sirupsen/logrus"
+	"time"
 )
 
 type AnimalService struct {
 	repo repository.Animal
+}
+
+func (s *AnimalService) GetVisitedLocationList(
+	animalID int64,
+	input *models.GetVisitedLocationQueryParams) ([]queries.AnimalVisitedLocation, error) {
+	var limit int32
+	var offset int32
+	var startDateTime *time.Time
+	var endDateTime *time.Time
+
+	if input.Size == nil {
+		limit = constants.VisitedLocationGetListDefaultLimit
+	} else {
+		limit = *input.Size
+	}
+
+	if input.From == nil {
+		offset = constants.VisitedLocationGetListDefaultOffset
+	} else {
+		offset = *input.From
+	}
+
+	if input.StartDateTime == nil {
+		startDateTime = nil
+	} else {
+		parseDate, err := time.Parse(time.RFC3339, *input.StartDateTime)
+		if err != nil {
+			return nil, err
+		}
+		startDateTime = &parseDate
+	}
+
+	if input.EndDateTime == nil {
+		endDateTime = nil
+	} else {
+		parseDate, err := time.Parse(time.RFC3339, *input.EndDateTime)
+		if err != nil {
+			return nil, err
+		}
+		endDateTime = &parseDate
+	}
+
+	params := queries.GetVisitedLocationListParams{
+		Animal:  animalID,
+		Column2: *startDateTime,
+		Column3: *endDateTime,
+		Offset:  offset,
+		Limit:   limit,
+	}
+
+	return s.repo.GetVisitedLocationList(&params)
 }
 
 func (s *AnimalService) RemoveVisitedLocationID(animalID int64, visitedLocationID int64) error {

@@ -224,3 +224,14 @@ UPDATE "AnimalVisitedLocation"
 SET deleted=true
 WHERE id=$1
 RETURNING *;
+
+-- name: GetVisitedLocationList :many
+SELECT *
+FROM "AnimalVisitedLocation"
+WHERE "deleted" = false
+    AND "animal" = $1
+    AND ("date" >= COALESCE($2::TIMESTAMP, '1970-01-01'::TIMESTAMP))
+    AND ("date" <= COALESCE($3::TIMESTAMP, NOW()))
+ORDER BY "date" ASC
+OFFSET $4
+LIMIT $5;
