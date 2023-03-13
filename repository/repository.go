@@ -26,6 +26,7 @@ type Animal interface {
 	IsExistVisitedLocationByID(visitedLocationID int64) (bool, error)
 	IsLinkedVisitedLocation(animalID int64, visitedLocationPointID int64) (bool, error)
 	UpdateVisitedLocation(visitedLocationPointID int64, locationPointID int64) (*queries.AnimalVisitedLocation, error)
+	RemoveVisitedLocation(visitedLocationPointID int64) error
 }
 
 type AnimalType interface {

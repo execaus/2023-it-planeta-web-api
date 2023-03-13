@@ -10,6 +10,16 @@ type AnimalPostgres struct {
 	db *queries.Queries
 }
 
+func (r *AnimalPostgres) RemoveVisitedLocation(visitedLocationPointID int64) error {
+	_, err := r.db.RemoveVisitedLocation(context.Background(), visitedLocationPointID)
+	if err != nil {
+		logrus.Error(err.Error())
+		return err
+	}
+
+	return nil
+}
+
 func (r *AnimalPostgres) UpdateVisitedLocation(
 	visitedLocationPointID int64, locationPointID int64) (*queries.AnimalVisitedLocation, error) {
 	point, err := r.db.UpdateVisitedLocation(context.Background(), queries.UpdateVisitedLocationParams{

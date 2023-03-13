@@ -124,11 +124,6 @@ func (h *Handler) updateVisitedLocation(c *gin.Context) {
 	}
 
 	// 400 Обновление точки локации на точку, совпадающую со следующей и/или с предыдущей точками
-	//isSurroundedDuplicatesPoints, err := h.services.Animal.IsSurroundedDuplicatesVisitedPoints(
-	//	input.VisitedLocationPointID,
-	//	input.LocationPointID,
-	//)
-
 	visitedLocations, err := h.services.Animal.GetVisitedLocations(animalID)
 	if err != nil {
 		h.sendInternalServerError(c)
@@ -139,6 +134,10 @@ func (h *Handler) updateVisitedLocation(c *gin.Context) {
 		visitedLocations,
 		input.VisitedLocationPointID,
 	)
+	if err != nil {
+		h.sendInternalServerError(c)
+		return
+	}
 
 	if isSurroundedDuplicatesPoints {
 		h.sendBadRequest(c, "update the location point to the point "+
@@ -210,4 +209,64 @@ func (h *Handler) updateVisitedLocation(c *gin.Context) {
 	}
 
 	h.sendOKWithBody(c, &output)
+}
+
+func (h *Handler) removeVisitedLocation(c *gin.Context) {
+	animalID, err := getNumberParam(c, "animalId")
+	if err != nil {
+		h.sendBadRequest(c, err.Error())
+		return
+	}
+
+	visitedLocationID, err := getNumberParam(c, "visitedPointId")
+	if err != nil {
+		h.sendBadRequest(c, err.Error())
+		return
+	}
+
+	// 404 Животное с animalId не найдено
+	isExistAnimal, err := h.services.Animal.IsExistByID(animalID)
+	if err != nil {
+		h.sendInternalServerError(c)
+		return
+	}
+
+	if !isExistAnimal {
+		h.sendNotFound(c)
+		return
+	}
+
+	// 404 Объект с информацией о посещенной точке локации с visitedPointId не найден.
+	isExistLocation, err := h.services.Animal.IsExistVisitedLocationByID(visitedLocationID)
+	if err != nil {
+		h.sendInternalServerError(c)
+		return
+	}
+
+	if !isExistLocation {
+		h.sendNotFound(c)
+		return
+	}
+
+	// 404 У животного нет объекта с информацией о посещенной точке локации с visitedPointId
+	isLinkedVisitedLocationPoint, err := h.services.Animal.IsLinkedVisitedLocation(
+		animalID,
+		visitedLocationID,
+	)
+	if err != nil {
+		h.sendInternalServerError(c)
+		return
+	}
+
+	if !isLinkedVisitedLocationPoint {
+		h.sendNotFound(c)
+		return
+	}
+
+	if err = h.services.Animal.RemoveVisitedLocationID(animalID, visitedLocationID); err != nil {
+		h.sendInternalServerError(c)
+		return
+	}
+
+	h.sendOk(c)
 }

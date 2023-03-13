@@ -218,3 +218,9 @@ SET location=$1
 WHERE id=$2
 AND deleted=false
 RETURNING *;
+
+-- name: RemoveVisitedLocation :one
+UPDATE "AnimalVisitedLocation"
+SET deleted=true
+WHERE id=$1
+RETURNING *;

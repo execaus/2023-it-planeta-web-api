@@ -42,7 +42,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 			// visitedLocation.GET("", h.getVisitedLocation)
 			visitedLocation.POST("/:pointId", h.createVisitedLocation)
 			visitedLocation.PUT("", h.updateVisitedLocation)
-			// visitedLocation.DELETE("/:visitedPointId", h.removeVisitedLocation)
+			visitedLocation.DELETE("/:visitedPointId", h.removeVisitedLocation)
 		}
 
 		animal.GET("/:animalId", h.getAnimal)

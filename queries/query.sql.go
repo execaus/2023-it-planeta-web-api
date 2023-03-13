@@ -645,6 +645,26 @@ func (q *Queries) RemoveLocation(ctx context.Context, id int64) (LocationPoint, 
 	return i, err
 }
 
+const removeVisitedLocation = `-- name: RemoveVisitedLocation :one
+UPDATE "AnimalVisitedLocation"
+SET deleted=true
+WHERE id=$1
+RETURNING id, location, animal, date, deleted
+`
+
+func (q *Queries) RemoveVisitedLocation(ctx context.Context, id int64) (AnimalVisitedLocation, error) {
+	row := q.db.QueryRowContext(ctx, removeVisitedLocation, id)
+	var i AnimalVisitedLocation
+	err := row.Scan(
+		&i.ID,
+		&i.Location,
+		&i.Animal,
+		&i.Date,
+		&i.Deleted,
+	)
+	return i, err
+}
+
 const updateAccount = `-- name: UpdateAccount :one
 UPDATE "Account"
 SET first_name=$1, last_name=$2, email=$3, password=$4

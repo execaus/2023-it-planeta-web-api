@@ -11,6 +11,34 @@ type AnimalService struct {
 	repo repository.Animal
 }
 
+func (s *AnimalService) RemoveVisitedLocationID(animalID int64, visitedLocationID int64) error {
+	// Если удаляется первая посещенная точка локации,
+	// а вторая точка совпадает с точкой чипирования, то она удаляется автоматически
+	visitedLocations, err := s.repo.GetVisitedLocations(animalID)
+	if err != nil {
+		return err
+	}
+
+	if visitedLocations[0].ID != visitedLocationID {
+		chippingPoint, err := s.repo.GetChippingLocation(animalID)
+		if err != nil {
+			return err
+		}
+
+		secondLocation := visitedLocations[1].Location
+		if chippingPoint.ID == secondLocation {
+			if err = s.repo.RemoveVisitedLocation(secondLocation); err != nil {
+				return err
+			}
+		}
+	}
+
+	if err = s.repo.RemoveVisitedLocation(visitedLocationID); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (s *AnimalService) UpdateVisitedLocation(
 	visitedLocationPointID int64,
 	locationPointID int64) (*queries.AnimalVisitedLocation, error) {
