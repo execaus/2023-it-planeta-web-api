@@ -56,6 +56,12 @@ SELECT EXISTS (
   AND deleted=false
 );
 
+-- name: CreateAnimal :one
+INSERT INTO "Animal"
+(chipping_location, "weight", "length", "height", gender, life_status, chipping_date, chipper, death_date, deleted)
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+RETURNING *;
+
 -- name: GetAnimal :one
 SELECT *
 FROM "Animal"
@@ -102,6 +108,11 @@ RETURNING *;
 UPDATE "AnimalType"
 SET "value"=$1
 WHERE id=$2
+RETURNING *;
+
+-- name: BindAnimalTypeToAnimal :one
+INSERT INTO "AnimalToType" (animal, animal_type)
+VALUES ($1, $2)
 RETURNING *;
 
 -- name: GetAnimalTypeByID :one

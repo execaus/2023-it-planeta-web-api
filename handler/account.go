@@ -2,6 +2,7 @@ package handler
 
 import (
 	"2023-it-planeta-web-api/models"
+	"2023-it-planeta-web-api/utils"
 	"github.com/gin-gonic/gin"
 )
 
@@ -33,7 +34,7 @@ func (h *Handler) registrationAccount(c *gin.Context) {
 }
 
 func (h *Handler) getAccount(c *gin.Context) {
-	id, err := getNumberParam(c, "accountId")
+	id, err := utils.GetNumberParam(c, "accountId")
 	if err != nil {
 		h.sendBadRequest(c, err.Error())
 		return
@@ -92,7 +93,7 @@ func (h *Handler) getAccounts(c *gin.Context) {
 }
 
 func (h *Handler) updateAccount(c *gin.Context) {
-	id, err := getNumberParam(c, "accountId")
+	id, err := utils.GetNumberParam(c, "accountId")
 	if err != nil {
 		h.sendBadRequest(c, err.Error())
 		return
@@ -144,7 +145,7 @@ func (h *Handler) updateAccount(c *gin.Context) {
 }
 
 func (h *Handler) deleteAccount(c *gin.Context) {
-	id, err := getNumberParam(c, "accountId")
+	id, err := utils.GetNumberParam(c, "accountId")
 	if err != nil {
 		h.sendBadRequest(c, err.Error())
 		return

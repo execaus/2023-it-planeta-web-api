@@ -39,7 +39,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	{
 		animal.GET("/:animalId", h.getAnimal)
 		animal.GET("/search", h.getAnimals)
-		// animal.POST("", h.createAnimal)
+		animal.POST("", h.createAnimal)
 		// animal.PUT("/:animalId", h.updateAnimal)
 		// animal.DELETE("/:animalId", h.removeAnimal)
 

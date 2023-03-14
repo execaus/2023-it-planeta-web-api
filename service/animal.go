@@ -5,12 +5,43 @@ import (
 	"2023-it-planeta-web-api/models"
 	"2023-it-planeta-web-api/queries"
 	"2023-it-planeta-web-api/repository"
+	"database/sql"
 	"github.com/sirupsen/logrus"
 	"time"
 )
 
 type AnimalService struct {
 	repo repository.Animal
+}
+
+func (s *AnimalService) Create(input *models.CreateAnimalInput) (*queries.Animal, error) {
+	account, err := s.repo.Create(&queries.CreateAnimalParams{
+		ChippingLocation: input.ChippingLocationID,
+		Weight:           input.Weight,
+		Length:           input.Length,
+		Height:           input.Height,
+		Gender:           input.Gender,
+		LifeStatus:       constants.AnimalLifeStatusAlive,
+		ChippingDate:     time.Now(),
+		Chipper:          input.ChipperID,
+		DeathDate: sql.NullTime{
+			Time:  time.Time{},
+			Valid: false,
+		},
+		Deleted: false,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	for _, animalType := range input.AnimalTypes {
+		_, err = s.repo.BindAnimalType(account.ID, *animalType)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return account, err
 }
 
 func (s *AnimalService) GetList(input *models.GetAnimalsInput) ([]queries.Animal, error) {

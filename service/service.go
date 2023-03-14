@@ -31,6 +31,7 @@ type Animal interface {
 	RemoveVisitedLocationID(animalID int64, visitedLocationID int64) error
 	GetVisitedLocationList(animalID int64, input *models.GetVisitedLocationQueryParams) ([]queries.AnimalVisitedLocation, error)
 	GetList(input *models.GetAnimalsInput) ([]queries.Animal, error)
+	Create(input *models.CreateAnimalInput) (*queries.Animal, error)
 }
 
 type AnimalType interface {

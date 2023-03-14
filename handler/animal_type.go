@@ -2,11 +2,12 @@ package handler
 
 import (
 	"2023-it-planeta-web-api/models"
+	"2023-it-planeta-web-api/utils"
 	"github.com/gin-gonic/gin"
 )
 
 func (h *Handler) getAnimalType(c *gin.Context) {
-	id, err := getNumberParam(c, "typeId")
+	id, err := utils.GetNumberParam(c, "typeId")
 	if err != nil {
 		h.sendBadRequest(c, err.Error())
 		return
@@ -71,7 +72,7 @@ func (h *Handler) createAnimalType(c *gin.Context) {
 }
 
 func (h *Handler) updateAnimalType(c *gin.Context) {
-	id, err := getNumberParam(c, "typeId")
+	id, err := utils.GetNumberParam(c, "typeId")
 	if err != nil {
 		h.sendBadRequest(c, err.Error())
 		return
@@ -120,7 +121,7 @@ func (h *Handler) updateAnimalType(c *gin.Context) {
 }
 
 func (h *Handler) removeAnimalType(c *gin.Context) {
-	id, err := getNumberParam(c, "typeId")
+	id, err := utils.GetNumberParam(c, "typeId")
 	if err != nil {
 		h.sendBadRequest(c, err.Error())
 		return

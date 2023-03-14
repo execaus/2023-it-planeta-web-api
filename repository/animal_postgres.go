@@ -10,6 +10,29 @@ type AnimalPostgres struct {
 	db *queries.Queries
 }
 
+func (r *AnimalPostgres) BindAnimalType(animalID int64, animalType int64) (*queries.AnimalToType, error) {
+	row, err := r.db.BindAnimalTypeToAnimal(context.Background(), queries.BindAnimalTypeToAnimalParams{
+		Animal:     animalID,
+		AnimalType: animalType,
+	})
+	if err != nil {
+		logrus.Error(err.Error())
+		return nil, err
+	}
+
+	return &row, err
+}
+
+func (r *AnimalPostgres) Create(params *queries.CreateAnimalParams) (*queries.Animal, error) {
+	animal, err := r.db.CreateAnimal(context.Background(), *params)
+	if err != nil {
+		logrus.Error(err.Error())
+		return nil, err
+	}
+
+	return &animal, nil
+}
+
 func (r *AnimalPostgres) GetList(params *queries.GetAnimalsParams) ([]queries.Animal, error) {
 	animals, err := r.db.GetAnimals(context.Background(), *params)
 	if err != nil {

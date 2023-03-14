@@ -11,6 +11,24 @@ import (
 	"time"
 )
 
+const bindAnimalTypeToAnimal = `-- name: BindAnimalTypeToAnimal :one
+INSERT INTO "AnimalToType" (animal, animal_type)
+VALUES ($1, $2)
+RETURNING animal, animal_type
+`
+
+type BindAnimalTypeToAnimalParams struct {
+	Animal     int64
+	AnimalType int64
+}
+
+func (q *Queries) BindAnimalTypeToAnimal(ctx context.Context, arg BindAnimalTypeToAnimalParams) (AnimalToType, error) {
+	row := q.db.QueryRowContext(ctx, bindAnimalTypeToAnimal, arg.Animal, arg.AnimalType)
+	var i AnimalToType
+	err := row.Scan(&i.Animal, &i.AnimalType)
+	return i, err
+}
+
 const createAccount = `-- name: CreateAccount :one
 INSERT INTO "Account" (first_name, last_name, email, password, deleted)
 VALUES ($1, $2, $3, $4, false)
@@ -38,6 +56,56 @@ func (q *Queries) CreateAccount(ctx context.Context, arg CreateAccountParams) (A
 		&i.LastName,
 		&i.Email,
 		&i.Password,
+		&i.Deleted,
+	)
+	return i, err
+}
+
+const createAnimal = `-- name: CreateAnimal :one
+INSERT INTO "Animal"
+(chipping_location, "weight", "length", "height", gender, life_status, chipping_date, chipper, death_date, deleted)
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+RETURNING id, chipping_location, weight, length, height, gender, life_status, chipping_date, chipper, death_date, deleted
+`
+
+type CreateAnimalParams struct {
+	ChippingLocation int64
+	Weight           float64
+	Length           float64
+	Height           float64
+	Gender           string
+	LifeStatus       string
+	ChippingDate     time.Time
+	Chipper          int64
+	DeathDate        sql.NullTime
+	Deleted          bool
+}
+
+func (q *Queries) CreateAnimal(ctx context.Context, arg CreateAnimalParams) (Animal, error) {
+	row := q.db.QueryRowContext(ctx, createAnimal,
+		arg.ChippingLocation,
+		arg.Weight,
+		arg.Length,
+		arg.Height,
+		arg.Gender,
+		arg.LifeStatus,
+		arg.ChippingDate,
+		arg.Chipper,
+		arg.DeathDate,
+		arg.Deleted,
+	)
+	var i Animal
+	err := row.Scan(
+		&i.ID,
+		&i.ChippingLocation,
+		&i.Weight,
+		&i.Length,
+		&i.Height,
+		&i.Gender,
+		&i.LifeStatus,
+		&i.ChippingDate,
+		&i.Chipper,
+		&i.DeathDate,
 		&i.Deleted,
 	)
 	return i, err

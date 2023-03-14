@@ -2,6 +2,7 @@ package handler
 
 import (
 	"2023-it-planeta-web-api/models"
+	"2023-it-planeta-web-api/utils"
 	"github.com/gin-gonic/gin"
 	"time"
 )
@@ -24,17 +25,17 @@ func (h *Handler) getVisitedLocation(c *gin.Context) {
 		return
 	}
 
-	if input.StartDateTime != nil && !IsISO8601Date(*input.StartDateTime) {
+	if input.StartDateTime != nil && !utils.IsISO8601Date(*input.StartDateTime) {
 		h.sendBadRequest(c, "invalid parameter start date time")
 		return
 	}
 
-	if input.EndDateTime != nil && !IsISO8601Date(*input.EndDateTime) {
+	if input.EndDateTime != nil && !utils.IsISO8601Date(*input.EndDateTime) {
 		h.sendBadRequest(c, "invalid parameter end date time")
 		return
 	}
 
-	animalID, err := getNumberParam(c, "animalId")
+	animalID, err := utils.GetNumberParam(c, "animalId")
 	if err != nil {
 		h.sendBadRequest(c, err.Error())
 		return
@@ -63,7 +64,7 @@ func (h *Handler) getVisitedLocation(c *gin.Context) {
 	for i, visitedLocation := range visitedLocations {
 		output[i] = &models.GetVisitedLocationOutput{
 			ID:                           visitedLocation.ID,
-			DateTimeOfVisitLocationPoint: convertDateToISO8601(visitedLocation.Date),
+			DateTimeOfVisitLocationPoint: utils.ConvertDateToISO8601(visitedLocation.Date),
 			LocationPointID:              visitedLocation.Location,
 		}
 	}
@@ -72,13 +73,13 @@ func (h *Handler) getVisitedLocation(c *gin.Context) {
 }
 
 func (h *Handler) createVisitedLocation(c *gin.Context) {
-	animalID, err := getNumberParam(c, "animalId")
+	animalID, err := utils.GetNumberParam(c, "animalId")
 	if err != nil {
 		h.sendBadRequest(c, err.Error())
 		return
 	}
 
-	pointID, err := getNumberParam(c, "pointId")
+	pointID, err := utils.GetNumberParam(c, "pointId")
 	if err != nil {
 		h.sendBadRequest(c, err.Error())
 		return
@@ -153,7 +154,7 @@ func (h *Handler) updateVisitedLocation(c *gin.Context) {
 		return
 	}
 
-	animalID, err := getNumberParam(c, "animalId")
+	animalID, err := utils.GetNumberParam(c, "animalId")
 	if err != nil {
 		h.sendBadRequest(c, err.Error())
 		return
@@ -277,13 +278,13 @@ func (h *Handler) updateVisitedLocation(c *gin.Context) {
 }
 
 func (h *Handler) removeVisitedLocation(c *gin.Context) {
-	animalID, err := getNumberParam(c, "animalId")
+	animalID, err := utils.GetNumberParam(c, "animalId")
 	if err != nil {
 		h.sendBadRequest(c, err.Error())
 		return
 	}
 
-	visitedLocationID, err := getNumberParam(c, "visitedPointId")
+	visitedLocationID, err := utils.GetNumberParam(c, "visitedPointId")
 	if err != nil {
 		h.sendBadRequest(c, err.Error())
 		return

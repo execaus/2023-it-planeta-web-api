@@ -2,11 +2,12 @@ package handler
 
 import (
 	"2023-it-planeta-web-api/models"
+	"2023-it-planeta-web-api/utils"
 	"github.com/gin-gonic/gin"
 )
 
 func (h *Handler) getLocation(c *gin.Context) {
-	id, err := getNumberParam(c, "pointId")
+	id, err := utils.GetNumberParam(c, "pointId")
 	if err != nil {
 		h.sendBadRequest(c, err.Error())
 		return
@@ -72,7 +73,7 @@ func (h *Handler) createLocation(c *gin.Context) {
 }
 
 func (h *Handler) updateLocation(c *gin.Context) {
-	id, err := getNumberParam(c, "pointId")
+	id, err := utils.GetNumberParam(c, "pointId")
 	if err != nil {
 		h.sendBadRequest(c, err.Error())
 		return
@@ -122,7 +123,7 @@ func (h *Handler) updateLocation(c *gin.Context) {
 }
 
 func (h *Handler) removeLocation(c *gin.Context) {
-	id, err := getNumberParam(c, "pointId")
+	id, err := utils.GetNumberParam(c, "pointId")
 	if err != nil {
 		h.sendBadRequest(c, err.Error())
 		return

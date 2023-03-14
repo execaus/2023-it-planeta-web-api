@@ -1,20 +1,25 @@
 package models
 
-import "2023-it-planeta-web-api/ctype"
+import (
+	"2023-it-planeta-web-api/constants"
+	"2023-it-planeta-web-api/ctype"
+	"2023-it-planeta-web-api/utils"
+	"errors"
+)
 
 type GetAnimalOutput struct {
-	ID                 int64
-	AnimalTypes        []int64
-	Weight             float64
-	Length             float64
-	Height             float64
-	Gender             string
-	LifeStatus         string
-	ChippingDateTime   string
-	ChipperID          int64
-	ChippingLocationID int64
-	VisitedLocations   []int64
-	DeathDateTime      ctype.TimeOrNil
+	ID                 int64           `json:"Id,omitempty"`
+	AnimalTypes        []int64         `json:"animalTypes,omitempty"`
+	Weight             float64         `json:"weight,omitempty"`
+	Length             float64         `json:"length,omitempty"`
+	Height             float64         `json:"height,omitempty"`
+	Gender             string          `json:"gender,omitempty"`
+	LifeStatus         string          `json:"lifeStatus,omitempty"`
+	ChippingDateTime   string          `json:"chippingDateTime,omitempty"`
+	ChipperID          int64           `json:"chipperId,omitempty"`
+	ChippingLocationID int64           `json:"chippingLocationId,omitempty"`
+	VisitedLocations   []int64         `json:"visitedLocations,omitempty"`
+	DeathDateTime      ctype.TimeOrNil `json:"deathDateTime,omitempty"`
 }
 
 type GetAnimalsInput struct {
@@ -28,17 +33,103 @@ type GetAnimalsInput struct {
 	Size               *int32  `form:"size"`
 }
 
+func (i *GetAnimalsInput) Validate() error {
+	if i.From != nil && *i.From < 0 {
+		return errors.New("invalid parameter from")
+	}
+
+	if i.Size != nil && *i.Size <= 0 {
+		return errors.New("invalid parameter size")
+	}
+
+	if i.StartDateTime != nil && !utils.IsISO8601Date(*i.StartDateTime) {
+		return errors.New("invalid parameter start date time")
+	}
+
+	if i.EndDateTime != nil && !utils.IsISO8601Date(*i.EndDateTime) {
+		return errors.New("invalid parameter end date time")
+	}
+
+	if i.ChipperID != nil && *i.ChipperID <= 0 {
+		return errors.New("invalid parameter chipper id")
+	}
+
+	if i.ChipperID != nil && *i.ChipperID <= 0 {
+		return errors.New("invalid parameter chipping location")
+	}
+
+	if i.LifeStatus != nil {
+		if !constants.IsAnimalLifeStatus(*i.LifeStatus) {
+			return errors.New("invalid parameter life status")
+		}
+	}
+
+	if i.Gender != nil {
+		if !constants.IsAnimalGender(*i.Gender) {
+			return errors.New("invalid parameter gender")
+		}
+	}
+
+	return nil
+}
+
 type GetAnimalsOutput struct {
-	ID                 int64
-	AnimalTypes        []int64
-	Weight             float64
-	Length             float64
-	Height             float64
-	Gender             string
-	LifeStatus         string
-	ChippingDateTime   string
-	ChipperID          int64
-	ChippingLocationID int64
-	VisitedLocations   []int64
-	DeathDateTime      ctype.TimeOrNil
+	ID                 int64           `json:"Id,omitempty"`
+	AnimalTypes        []int64         `json:"animalTypes,omitempty"`
+	Weight             float64         `json:"weight,omitempty"`
+	Length             float64         `json:"length,omitempty"`
+	Height             float64         `json:"height,omitempty"`
+	Gender             string          `json:"gender,omitempty"`
+	LifeStatus         string          `json:"lifeStatus,omitempty"`
+	ChippingDateTime   string          `json:"chippingDateTime,omitempty"`
+	ChipperID          int64           `json:"chipperId,omitempty"`
+	ChippingLocationID int64           `json:"chippingLocationId,omitempty"`
+	VisitedLocations   []int64         `json:"visitedLocations,omitempty"`
+	DeathDateTime      ctype.TimeOrNil `json:"deathDateTime,omitempty"`
+}
+
+type CreateAnimalInput struct {
+	AnimalTypes        []*int64 `json:"animalTypes" binding:"required"`
+	Weight             float64  `json:"weight" binding:"required,min=1"`
+	Length             float64  `json:"length" binding:"required,min=1"`
+	Height             float64  `json:"height" binding:"required,min=1"`
+	Gender             string   `json:"gender" binding:"required"`
+	ChipperID          int64    `json:"chipperId" binding:"required,min=1"`
+	ChippingLocationID int64    `json:"chippingLocationId" binding:"required,min=1"`
+}
+
+func (i *CreateAnimalInput) Validate() error {
+	if len(i.AnimalTypes) <= 0 {
+		return errors.New("invalid field animal types")
+	}
+
+	for _, animalType := range i.AnimalTypes {
+		if animalType == nil {
+			return errors.New("invalid element in animal types")
+		}
+		if *animalType <= 0 {
+			return errors.New("invalid value element in animal types")
+		}
+	}
+
+	if !constants.IsAnimalGender(i.Gender) {
+		return errors.New("invalid gender value")
+	}
+
+	return nil
+}
+
+type CreateAnimalOutput struct {
+	ID                 int64           `json:"Id,omitempty"`
+	AnimalTypes        []int64         `json:"animalTypes,omitempty"`
+	Weight             float64         `json:"weight,omitempty"`
+	Length             float64         `json:"length,omitempty"`
+	Height             float64         `json:"height,omitempty"`
+	Gender             string          `json:"gender,omitempty"`
+	LifeStatus         string          `json:"lifeStatus,omitempty"`
+	ChippingDateTime   string          `json:"chippingDateTime,omitempty"`
+	ChipperID          int64           `json:"chipperId,omitempty"`
+	ChippingLocationID int64           `json:"chippingLocationId,omitempty"`
+	VisitedLocations   []int64         `json:"visitedLocations,omitempty"`
+	DeathDateTime      ctype.TimeOrNil `json:"deathDateTime,omitempty"`
 }

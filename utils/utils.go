@@ -1,4 +1,4 @@
-package handler
+package utils
 
 import (
 	"2023-it-planeta-web-api/ctype"
@@ -14,15 +14,15 @@ const (
 	stringEmpty = ""
 )
 
-func convertDateToISO8601(date time.Time) string {
+func ConvertDateToISO8601(date time.Time) string {
 	return date.Format(time.RFC3339)
 }
 
-func convertNullDateToISO8601(date sql.NullTime) ctype.TimeOrNil {
+func ConvertNullDateToISO8601(date sql.NullTime) ctype.TimeOrNil {
 	if !date.Valid {
 		return nil
 	}
-	return convertDateToISO8601(date.Time)
+	return ConvertDateToISO8601(date.Time)
 }
 
 func IsISO8601Date(str string) bool {
@@ -30,7 +30,7 @@ func IsISO8601Date(str string) bool {
 	return err == nil
 }
 
-func getNumberParam(c *gin.Context, key string) (int64, error) {
+func GetNumberParam(c *gin.Context, key string) (int64, error) {
 	stringID := c.Param(key)
 	if stringID == stringEmpty || stringID == stringNull {
 		return 0, errors.New("id is not valid")
@@ -46,4 +46,16 @@ func getNumberParam(c *gin.Context, key string) (int64, error) {
 	}
 
 	return id, nil
+}
+
+func HasDuplicates(collection []*int64) bool {
+	seen := make(map[int64]bool)
+	for _, element := range collection {
+		if seen[*element] == true {
+			return true // Дубликат найден
+		} else {
+			seen[*element] = true
+		}
+	}
+	return false // Дубликатов нет
 }
