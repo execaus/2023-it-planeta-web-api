@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"2023-it-planeta-web-api/constants"
 	"2023-it-planeta-web-api/models"
 	"2023-it-planeta-web-api/utils"
 	"github.com/gin-gonic/gin"
@@ -143,12 +144,12 @@ func (h *Handler) createAnimal(c *gin.Context) {
 
 	// 404 Тип животного не найден
 	for _, animalType := range input.AnimalTypes {
-		IsExistAnimal, err := h.services.AnimalType.IsExistByID(*animalType)
+		isExistAnimal, err := h.services.AnimalType.IsExistByID(*animalType)
 		if err != nil {
 			h.sendInternalServerError(c)
 			return
 		}
-		if !IsExistAnimal {
+		if !isExistAnimal {
 			h.sendNotFound(c)
 			return
 		}
@@ -190,19 +191,19 @@ func (h *Handler) createAnimal(c *gin.Context) {
 		return
 	}
 
-	visitedLocationIDs := make([]int64, len(visitedLocations))
+	visitedLocationID := make([]int64, len(visitedLocations))
 	for i, location := range visitedLocations {
-		visitedLocationIDs[i] = location.ID
+		visitedLocationID[i] = location.ID
 	}
 
-	animalsTypeIDs := make([]int64, len(input.AnimalTypes))
+	animalsTypeID := make([]int64, len(input.AnimalTypes))
 	for i, animalType := range input.AnimalTypes {
-		animalsTypeIDs[i] = *animalType
+		animalsTypeID[i] = *animalType
 	}
 
 	output := models.CreateAnimalOutput{
 		ID:                 animal.ID,
-		AnimalTypes:        animalsTypeIDs,
+		AnimalTypes:        animalsTypeID,
 		Weight:             animal.Weight,
 		Length:             animal.Length,
 		Height:             animal.Height,
@@ -211,8 +212,127 @@ func (h *Handler) createAnimal(c *gin.Context) {
 		ChippingDateTime:   utils.ConvertDateToISO8601(animal.ChippingDate),
 		ChipperID:          animal.Chipper,
 		ChippingLocationID: animal.ChippingLocation,
-		VisitedLocations:   visitedLocationIDs,
+		VisitedLocations:   visitedLocationID,
 		DeathDateTime:      nil,
+	}
+
+	h.sendOKWithBody(c, &output)
+}
+
+func (h *Handler) updateAnimal(c *gin.Context) {
+	animalID, err := utils.GetNumberParam(c, "animalId")
+	if err != nil {
+		h.sendBadRequest(c, err.Error())
+		return
+	}
+
+	var input models.UpdateAnimalInput
+	if err = c.BindJSON(&input); err != nil {
+		h.sendBadRequest(c, err.Error())
+		return
+	}
+
+	if err = input.Validate(); err != nil {
+		h.sendBadRequest(c, err.Error())
+		return
+	}
+
+	// 400 Установка lifeStatus = “ALIVE”, если у животного lifeStatus = “DEAD”
+	currentAnimal, err := h.services.Animal.Get(animalID)
+	if err != nil {
+		h.sendInternalServerError(c)
+		return
+	}
+
+	if currentAnimal.LifeStatus == constants.AnimalLifeStatusDead &&
+		input.LifeStatus == constants.AnimalLifeStatusAlive {
+		h.sendBadRequest(c, "invalid value life status")
+		return
+	}
+
+	// 400 Новая точка чипирования совпадает с первой посещенной точкой локации
+	visitedLocations, err := h.services.Animal.GetVisitedLocations(animalID)
+	if err != nil {
+		h.sendInternalServerError(c)
+		return
+	}
+
+	if len(visitedLocations) > 0 && visitedLocations[0].Location == input.ChippingLocationID {
+		h.sendBadRequest(c, "the new chipping point coincides with the first visited location point")
+		return
+	}
+
+	// 404 Животное с animalId не найдено
+	isExistAnimal, err := h.services.Animal.IsExistByID(animalID)
+	if err != nil {
+		h.sendInternalServerError(c)
+		return
+	}
+
+	if !isExistAnimal {
+		h.sendNotFound(c)
+		return
+	}
+
+	// 404 Аккаунт с chipperId не найден
+	isExistChipper, err := h.services.Account.IsExistByID(input.ChipperID)
+	if err != nil {
+		h.sendInternalServerError(c)
+		return
+	}
+
+	if !isExistChipper {
+		h.sendNotFound(c)
+		return
+	}
+
+	// 404 Точка локации с chippingLocationId не найдена
+	isExistChippingLocation, err := h.services.Location.IsExistByID(input.ChippingLocationID)
+	if err != nil {
+		h.sendInternalServerError(c)
+		return
+	}
+
+	if !isExistChippingLocation {
+		h.sendNotFound(c)
+		return
+	}
+
+	animal, err := h.services.Animal.Update(animalID, &input)
+	if err != nil {
+		h.sendInternalServerError(c)
+		return
+	}
+
+	animalTypes, err := h.services.AnimalType.GetByAnimalID(animalID)
+	if err != nil {
+		h.sendInternalServerError(c)
+		return
+	}
+
+	animalTypesID := make([]int64, len(animalTypes))
+	for i, animalType := range animalTypes {
+		animalTypesID[i] = animalType.AnimalType
+	}
+
+	visitedLocationsID := make([]int64, len(visitedLocations))
+	for i, location := range visitedLocations {
+		visitedLocationsID[i] = location.ID
+	}
+
+	output := models.UpdateAnimalOutput{
+		ID:                 animal.ID,
+		AnimalTypes:        animalTypesID,
+		Weight:             animal.Weight,
+		Length:             animal.Length,
+		Height:             animal.Height,
+		Gender:             animal.Gender,
+		LifeStatus:         animal.LifeStatus,
+		ChippingDateTime:   utils.ConvertDateToISO8601(animal.ChippingDate),
+		ChipperID:          animal.Chipper,
+		ChippingLocationID: animal.ChippingLocation,
+		VisitedLocations:   visitedLocationsID,
+		DeathDateTime:      utils.ConvertNullDateToISO8601(animal.DeathDate),
 	}
 
 	h.sendOKWithBody(c, &output)

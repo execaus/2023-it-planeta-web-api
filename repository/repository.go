@@ -31,6 +31,7 @@ type Animal interface {
 	GetList(params *queries.GetAnimalsParams) ([]queries.Animal, error)
 	Create(params *queries.CreateAnimalParams) (*queries.Animal, error)
 	BindAnimalType(animalID int64, animalType int64) (*queries.AnimalToType, error)
+	Update(params *queries.UpdateAnimalParams) (*queries.Animal, error)
 }
 
 type AnimalType interface {

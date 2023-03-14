@@ -29,9 +29,13 @@ type Animal interface {
 	IsLinkedVisitedLocation(animalID int64, visitedLocationPointID int64) (bool, error)
 	UpdateVisitedLocation(visitedLocationPointID int64, locationPointID int64) (*queries.AnimalVisitedLocation, error)
 	RemoveVisitedLocationID(animalID int64, visitedLocationID int64) error
-	GetVisitedLocationList(animalID int64, input *models.GetVisitedLocationQueryParams) ([]queries.AnimalVisitedLocation, error)
+	GetVisitedLocationList(
+		animalID int64,
+		input *models.GetVisitedLocationQueryParams,
+	) ([]queries.AnimalVisitedLocation, error)
 	GetList(input *models.GetAnimalsInput) ([]queries.Animal, error)
 	Create(input *models.CreateAnimalInput) (*queries.Animal, error)
+	Update(animalID int64, input *models.UpdateAnimalInput) (*queries.Animal, error)
 }
 
 type AnimalType interface {

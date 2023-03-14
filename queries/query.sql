@@ -82,6 +82,18 @@ WHERE
 ORDER BY "id"
 LIMIT $7 OFFSET $8;
 
+-- name: UpdateAnimal :one
+UPDATE "Animal"
+SET weight=$1
+AND length=$2
+AND height=$3
+AND gender=$4
+AND life_status=$5
+AND chipper=$6
+AND chipping_location=$7
+WHERE id=$8
+RETURNING *;
+
 
 -- name: IsExistAnimalTypeByID :one
 SELECT EXISTS (

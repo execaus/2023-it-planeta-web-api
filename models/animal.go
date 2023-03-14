@@ -8,7 +8,7 @@ import (
 )
 
 type GetAnimalOutput struct {
-	ID                 int64           `json:"Id,omitempty"`
+	ID                 int64           `json:"id,omitempty"`
 	AnimalTypes        []int64         `json:"animalTypes,omitempty"`
 	Weight             float64         `json:"weight,omitempty"`
 	Length             float64         `json:"length,omitempty"`
@@ -74,7 +74,7 @@ func (i *GetAnimalsInput) Validate() error {
 }
 
 type GetAnimalsOutput struct {
-	ID                 int64           `json:"Id,omitempty"`
+	ID                 int64           `json:"id,omitempty"`
 	AnimalTypes        []int64         `json:"animalTypes,omitempty"`
 	Weight             float64         `json:"weight,omitempty"`
 	Length             float64         `json:"length,omitempty"`
@@ -120,7 +120,7 @@ func (i *CreateAnimalInput) Validate() error {
 }
 
 type CreateAnimalOutput struct {
-	ID                 int64           `json:"Id,omitempty"`
+	ID                 int64           `json:"id,omitempty"`
 	AnimalTypes        []int64         `json:"animalTypes,omitempty"`
 	Weight             float64         `json:"weight,omitempty"`
 	Length             float64         `json:"length,omitempty"`
@@ -132,4 +132,41 @@ type CreateAnimalOutput struct {
 	ChippingLocationID int64           `json:"chippingLocationId,omitempty"`
 	VisitedLocations   []int64         `json:"visitedLocations,omitempty"`
 	DeathDateTime      ctype.TimeOrNil `json:"deathDateTime,omitempty"`
+}
+
+type UpdateAnimalInput struct {
+	Weight             float64 `json:"weight" binding:"required,min=1"`
+	Length             float64 `json:"length" binding:"required,min=1"`
+	Height             float64 `json:"height" binding:"required,min=1"`
+	Gender             string  `json:"gender" binding:"required"`
+	LifeStatus         string  `json:"lifeStatus" binding:"required"`
+	ChipperID          int64   `json:"chipperId" binding:"required,min=1"`
+	ChippingLocationID int64   `json:"chippingLocationId" binding:"required,min=1"`
+}
+
+func (i *UpdateAnimalInput) Validate() error {
+	if !constants.IsAnimalLifeStatus(i.LifeStatus) {
+		return errors.New("invalid field life status")
+	}
+
+	if !constants.IsAnimalGender(i.Gender) {
+		return errors.New("invalid field gender")
+	}
+
+	return nil
+}
+
+type UpdateAnimalOutput struct {
+	ID                 int64           `json:"id"`
+	AnimalTypes        []int64         `json:"animalTypes"`
+	Weight             float64         `json:"weight"`
+	Length             float64         `json:"length"`
+	Height             float64         `json:"height"`
+	Gender             string          `json:"gender"`
+	LifeStatus         string          `json:"lifeStatus"`
+	ChippingDateTime   string          `json:"chippingDateTime"`
+	ChipperID          int64           `json:"chipperId"`
+	ChippingLocationID int64           `json:"chippingLocationId"`
+	VisitedLocations   []int64         `json:"visitedLocations"`
+	DeathDateTime      ctype.TimeOrNil `json:"deathDateTime"`
 }

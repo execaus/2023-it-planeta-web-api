@@ -14,6 +14,21 @@ type AnimalService struct {
 	repo repository.Animal
 }
 
+func (s *AnimalService) Update(animalID int64, input *models.UpdateAnimalInput) (*queries.Animal, error) {
+	params := queries.UpdateAnimalParams{
+		Weight:           input.Weight,
+		Length:           input.Length,
+		Height:           input.Height,
+		Gender:           input.Gender,
+		LifeStatus:       input.LifeStatus,
+		Chipper:          input.ChipperID,
+		ChippingLocation: input.ChippingLocationID,
+		ID:               animalID,
+	}
+
+	return s.repo.Update(&params)
+}
+
 func (s *AnimalService) Create(input *models.CreateAnimalInput) (*queries.Animal, error) {
 	account, err := s.repo.Create(&queries.CreateAnimalParams{
 		ChippingLocation: input.ChippingLocationID,
