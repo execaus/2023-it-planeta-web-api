@@ -1031,6 +1031,27 @@ func (q *Queries) UpdateAnimalType(ctx context.Context, arg UpdateAnimalTypePara
 	return i, err
 }
 
+const updateAnimalTypeToAnimal = `-- name: UpdateAnimalTypeToAnimal :one
+UPDATE "AnimalToType"
+SET animal_type=$1
+WHERE animal=$2
+AND animal_type=$3
+RETURNING animal, animal_type
+`
+
+type UpdateAnimalTypeToAnimalParams struct {
+	AnimalType   int64
+	Animal       int64
+	AnimalType_2 int64
+}
+
+func (q *Queries) UpdateAnimalTypeToAnimal(ctx context.Context, arg UpdateAnimalTypeToAnimalParams) (AnimalToType, error) {
+	row := q.db.QueryRowContext(ctx, updateAnimalTypeToAnimal, arg.AnimalType, arg.Animal, arg.AnimalType_2)
+	var i AnimalToType
+	err := row.Scan(&i.Animal, &i.AnimalType)
+	return i, err
+}
+
 const updateLocation = `-- name: UpdateLocation :one
 UPDATE "LocationPoint"
 SET latitude=$1, longitude=$2

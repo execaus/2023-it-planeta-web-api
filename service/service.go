@@ -39,6 +39,7 @@ type Animal interface {
 	Remove(animalID int64) error
 	IsLinkedAnimalType(animalID int64, typeID int64) (bool, error)
 	LinkAnimalType(animalID int64, typeID int64) error
+	UpdateAnimalTypeToAnimal(animalID int64, input *models.UpdateAnimalTypeToAnimalInput) error
 }
 
 type AnimalType interface {

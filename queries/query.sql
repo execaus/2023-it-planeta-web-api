@@ -162,6 +162,13 @@ INSERT INTO "AnimalToType" (animal, animal_type)
 VALUES ($1, $2)
 RETURNING *;
 
+-- name: UpdateAnimalTypeToAnimal :one
+UPDATE "AnimalToType"
+SET animal_type=$1
+WHERE animal=$2
+AND animal_type=$3
+RETURNING *;
+
 -- name: RemoveAnimalType :one
 UPDATE "AnimalType"
 SET deleted=true

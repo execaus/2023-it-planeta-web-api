@@ -158,3 +158,10 @@ func (i *UpdateAnimalInput) Validate() error {
 
 type UpdateAnimalOutput = outputAnimal
 type LinkAnimalTypeToAnimalOutput = outputAnimal
+
+type UpdateAnimalTypeToAnimalInput struct {
+	OldTypeId int64 `json:"oldTypeId" binding:"required,min=1"`
+	NewTypeId int64 `json:"newTypeId" binding:"required,min=1"`
+}
+
+type UpdateAnimalTypeToAnimalOutput = outputAnimal

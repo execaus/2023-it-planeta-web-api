@@ -10,6 +10,14 @@ type AnimalPostgres struct {
 	db *queries.Queries
 }
 
+func (r *AnimalPostgres) UpdateAnimalTypeToAnimal(params *queries.UpdateAnimalTypeToAnimalParams) error {
+	_, err := r.db.UpdateAnimalTypeToAnimal(context.Background(), *params)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (r *AnimalPostgres) LinkAnimalType(animalID int64, typeID int64) error {
 	_, err := r.db.LinkAnimalTypeToAnimal(context.Background(), queries.LinkAnimalTypeToAnimalParams{
 		Animal:     animalID,
@@ -18,7 +26,6 @@ func (r *AnimalPostgres) LinkAnimalType(animalID int64, typeID int64) error {
 	if err != nil {
 		return err
 	}
-
 	return nil
 }
 

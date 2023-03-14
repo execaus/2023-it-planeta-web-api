@@ -219,3 +219,91 @@ func (h *Handler) linkAnimalTypeToAnimal(c *gin.Context) {
 
 	h.sendOKWithBody(c, &output)
 }
+
+func (h *Handler) updateAnimalTypeToAnimal(c *gin.Context) {
+	animalID, err := utils.GetNumberParam(c, "animalId")
+	if err != nil {
+		h.sendBadRequest(c, err.Error())
+		return
+	}
+
+	var input models.UpdateAnimalTypeToAnimalInput
+	if err = c.BindJSON(&input); err != nil {
+		h.sendBadRequest(c, err.Error())
+		return
+	}
+
+	// 404 Животное с animalId не найдено
+	isExistAnimal, err := h.services.Animal.IsExistByID(animalID)
+	if err != nil {
+		h.sendInternalServerError(c)
+		return
+	}
+	if !isExistAnimal {
+		h.sendNotFound(c)
+		return
+	}
+
+	// 404 Тип животного с oldTypeId не найден
+	isExistOldType, err := h.services.AnimalType.IsExistByID(input.OldTypeId)
+	if err != nil {
+		h.sendInternalServerError(c)
+		return
+	}
+	if !isExistOldType {
+		h.sendNotFound(c)
+		return
+	}
+
+	// 404 Тип животного с newTypeId не найден
+	isExistNewType, err := h.services.AnimalType.IsExistByID(input.OldTypeId)
+	if err != nil {
+		h.sendInternalServerError(c)
+		return
+	}
+	if !isExistNewType {
+		h.sendNotFound(c)
+		return
+	}
+
+	// 404 Типа животного с oldTypeId нет у животного с animalId
+	isAnimalHaveOldType, err := h.services.Animal.IsLinkedAnimalType(animalID, input.OldTypeId)
+	if err != nil {
+		h.sendInternalServerError(c)
+		return
+	}
+	if !isAnimalHaveOldType {
+		h.sendNotFound(c)
+		return
+	}
+
+	// 409 Тип животного с newTypeId уже есть у животного с animalId
+	isAnimalHaveNewType, err := h.services.Animal.IsLinkedAnimalType(animalID, input.NewTypeId)
+	if err != nil {
+		h.sendInternalServerError(c)
+		return
+	}
+	if isAnimalHaveNewType {
+		h.sendConflict(c)
+		return
+	}
+
+	// 409 Животное с animalId уже имеет типы с oldTypeId и newTypeId
+	if isAnimalHaveOldType && isAnimalHaveNewType {
+		h.sendConflict(c)
+		return
+	}
+
+	if err = h.services.Animal.UpdateAnimalTypeToAnimal(animalID, &input); err != nil {
+		h.sendInternalServerError(c)
+		return
+	}
+
+	var output models.UpdateAnimalTypeToAnimalOutput
+	if err = output.Load(h.services, animalID); err != nil {
+		h.sendInternalServerError(c)
+		return
+	}
+
+	h.sendOKWithBody(c, &output)
+}

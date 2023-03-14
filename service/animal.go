@@ -14,6 +14,16 @@ type AnimalService struct {
 	repo repository.Animal
 }
 
+func (s *AnimalService) UpdateAnimalTypeToAnimal(animalID int64, input *models.UpdateAnimalTypeToAnimalInput) error {
+	params := queries.UpdateAnimalTypeToAnimalParams{
+		AnimalType:   input.NewTypeId,
+		Animal:       animalID,
+		AnimalType_2: input.OldTypeId,
+	}
+
+	return s.repo.UpdateAnimalTypeToAnimal(&params)
+}
+
 func (s *AnimalService) LinkAnimalType(animalID int64, typeID int64) error {
 	return s.repo.LinkAnimalType(animalID, typeID)
 }
