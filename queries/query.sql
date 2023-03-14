@@ -91,7 +91,8 @@ AND gender=$4
 AND life_status=$5
 AND chipper=$6
 AND chipping_location=$7
-WHERE id=$8
+AND death_date=$8
+WHERE id=$9
 RETURNING *;
 
 -- name: RemoveAnimal :one
@@ -130,6 +131,12 @@ RETURNING *;
 -- name: BindAnimalTypeToAnimal :one
 INSERT INTO "AnimalToType" (animal, animal_type)
 VALUES ($1, $2)
+RETURNING *;
+
+-- name: RemoveAnimalTypeToAnimal :one
+DELETE FROM "AnimalToType"
+WHERE animal=$1
+AND animal_type=$2
 RETURNING *;
 
 -- name: GetAnimalTypeByID :one

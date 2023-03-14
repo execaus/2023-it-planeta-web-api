@@ -885,6 +885,25 @@ func (q *Queries) RemoveAnimalType(ctx context.Context, id int64) (AnimalType, e
 	return i, err
 }
 
+const removeAnimalTypeToAnimal = `-- name: RemoveAnimalTypeToAnimal :one
+DELETE FROM "AnimalToType"
+WHERE animal=$1
+AND animal_type=$2
+RETURNING animal, animal_type
+`
+
+type RemoveAnimalTypeToAnimalParams struct {
+	Animal     int64
+	AnimalType int64
+}
+
+func (q *Queries) RemoveAnimalTypeToAnimal(ctx context.Context, arg RemoveAnimalTypeToAnimalParams) (AnimalToType, error) {
+	row := q.db.QueryRowContext(ctx, removeAnimalTypeToAnimal, arg.Animal, arg.AnimalType)
+	var i AnimalToType
+	err := row.Scan(&i.Animal, &i.AnimalType)
+	return i, err
+}
+
 const removeLocation = `-- name: RemoveLocation :one
 UPDATE "LocationPoint"
 SET deleted=true
@@ -969,7 +988,8 @@ AND gender=$4
 AND life_status=$5
 AND chipper=$6
 AND chipping_location=$7
-WHERE id=$8
+AND death_date=$8
+WHERE id=$9
 RETURNING id, chipping_location, weight, length, height, gender, life_status, chipping_date, chipper, death_date, deleted
 `
 
@@ -981,6 +1001,7 @@ type UpdateAnimalParams struct {
 	LifeStatus       string
 	Chipper          int64
 	ChippingLocation int64
+	DeathDate        sql.NullTime
 	ID               int64
 }
 
@@ -993,6 +1014,7 @@ func (q *Queries) UpdateAnimal(ctx context.Context, arg UpdateAnimalParams) (Ani
 		arg.LifeStatus,
 		arg.Chipper,
 		arg.ChippingLocation,
+		arg.DeathDate,
 		arg.ID,
 	)
 	var i Animal

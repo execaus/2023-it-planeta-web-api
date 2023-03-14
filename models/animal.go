@@ -165,3 +165,4 @@ type UpdateAnimalTypeToAnimalInput struct {
 }
 
 type UpdateAnimalTypeToAnimalOutput = outputAnimal
+type RemoveAnimalTypeToAnimalOutput = outputAnimal

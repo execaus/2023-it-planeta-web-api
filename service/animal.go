@@ -14,6 +14,14 @@ type AnimalService struct {
 	repo repository.Animal
 }
 
+func (s *AnimalService) RemoveAnimalType(animalID int64, typeID int64) error {
+	params := queries.RemoveAnimalTypeToAnimalParams{
+		Animal:     animalID,
+		AnimalType: typeID,
+	}
+	return s.repo.RemoveAnimalType(&params)
+}
+
 func (s *AnimalService) UpdateAnimalTypeToAnimal(animalID int64, input *models.UpdateAnimalTypeToAnimalInput) error {
 	params := queries.UpdateAnimalTypeToAnimalParams{
 		AnimalType:   input.NewTypeId,
@@ -37,6 +45,16 @@ func (s *AnimalService) Remove(animalID int64) error {
 }
 
 func (s *AnimalService) Update(animalID int64, input *models.UpdateAnimalInput) (*queries.Animal, error) {
+	deathDate := sql.NullTime{
+		Time:  time.Time{},
+		Valid: false,
+	}
+
+	if input.LifeStatus == constants.AnimalLifeStatusDead {
+		deathDate.Valid = true
+		deathDate.Time = time.Now()
+	}
+
 	params := queries.UpdateAnimalParams{
 		Weight:           input.Weight,
 		Length:           input.Length,
@@ -45,6 +63,7 @@ func (s *AnimalService) Update(animalID int64, input *models.UpdateAnimalInput) 
 		LifeStatus:       input.LifeStatus,
 		Chipper:          input.ChipperID,
 		ChippingLocation: input.ChippingLocationID,
+		DeathDate:        deathDate,
 		ID:               animalID,
 	}
 

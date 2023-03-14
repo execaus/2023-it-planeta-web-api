@@ -36,6 +36,7 @@ type Animal interface {
 	IsLinkedAnimalType(animalID int64, typeID int64) (bool, error)
 	LinkAnimalType(animalID int64, typeID int64) error
 	UpdateAnimalTypeToAnimal(params *queries.UpdateAnimalTypeToAnimalParams) error
+	RemoveAnimalType(params *queries.RemoveAnimalTypeToAnimalParams) error
 }
 
 type AnimalType interface {

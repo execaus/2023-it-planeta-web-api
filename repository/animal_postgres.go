@@ -10,6 +10,15 @@ type AnimalPostgres struct {
 	db *queries.Queries
 }
 
+func (r *AnimalPostgres) RemoveAnimalType(params *queries.RemoveAnimalTypeToAnimalParams) error {
+	_, err := r.db.RemoveAnimalTypeToAnimal(context.Background(), *params)
+	if err != nil {
+		logrus.Error(err.Error())
+		return err
+	}
+	return nil
+}
+
 func (r *AnimalPostgres) UpdateAnimalTypeToAnimal(params *queries.UpdateAnimalTypeToAnimalParams) error {
 	_, err := r.db.UpdateAnimalTypeToAnimal(context.Background(), *params)
 	if err != nil {
