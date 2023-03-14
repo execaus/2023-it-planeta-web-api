@@ -94,6 +94,11 @@ AND chipping_location=$7
 WHERE id=$8
 RETURNING *;
 
+-- name: RemoveAnimal :one
+UPDATE "Animal"
+SET deleted=true
+WHERE id=$1
+RETURNING *;
 
 -- name: IsExistAnimalTypeByID :one
 SELECT EXISTS (

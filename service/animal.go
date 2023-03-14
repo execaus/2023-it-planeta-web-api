@@ -14,6 +14,10 @@ type AnimalService struct {
 	repo repository.Animal
 }
 
+func (s *AnimalService) Remove(animalID int64) error {
+	return s.repo.Remove(animalID)
+}
+
 func (s *AnimalService) Update(animalID int64, input *models.UpdateAnimalInput) (*queries.Animal, error) {
 	params := queries.UpdateAnimalParams{
 		Weight:           input.Weight,

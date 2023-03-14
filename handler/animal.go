@@ -337,3 +337,41 @@ func (h *Handler) updateAnimal(c *gin.Context) {
 
 	h.sendOKWithBody(c, &output)
 }
+
+func (h *Handler) removeAnimal(c *gin.Context) {
+	animalID, err := utils.GetNumberParam(c, "animalId")
+	if err != nil {
+		h.sendBadRequest(c, err.Error())
+		return
+	}
+
+	// 404 Животное с animalId не найдено
+	isExistAnimal, err := h.services.Animal.IsExistByID(animalID)
+	if err != nil {
+		h.sendInternalServerError(c)
+		return
+	}
+
+	if !isExistAnimal {
+		h.sendNotFound(c)
+		return
+	}
+
+	// 400 Животное покинуло локацию чипирования, при этом есть другие посещенные точки
+	visitedLocations, err := h.services.Animal.GetVisitedLocations(animalID)
+	if err != nil {
+		h.sendInternalServerError(c)
+		return
+	}
+	if len(visitedLocations) > 0 {
+		h.sendBadRequest(c, "the animal has left the chipping location and there are other visited locations")
+		return
+	}
+
+	if err = h.services.Animal.Remove(animalID); err != nil {
+		h.sendInternalServerError(c)
+		return
+	}
+
+	h.sendOk(c)
+}

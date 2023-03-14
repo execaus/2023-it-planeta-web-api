@@ -806,6 +806,32 @@ func (q *Queries) RemoveAccount(ctx context.Context, id int64) (Account, error) 
 	return i, err
 }
 
+const removeAnimal = `-- name: RemoveAnimal :one
+UPDATE "Animal"
+SET deleted=true
+WHERE id=$1
+RETURNING id, chipping_location, weight, length, height, gender, life_status, chipping_date, chipper, death_date, deleted
+`
+
+func (q *Queries) RemoveAnimal(ctx context.Context, id int64) (Animal, error) {
+	row := q.db.QueryRowContext(ctx, removeAnimal, id)
+	var i Animal
+	err := row.Scan(
+		&i.ID,
+		&i.ChippingLocation,
+		&i.Weight,
+		&i.Length,
+		&i.Height,
+		&i.Gender,
+		&i.LifeStatus,
+		&i.ChippingDate,
+		&i.Chipper,
+		&i.DeathDate,
+		&i.Deleted,
+	)
+	return i, err
+}
+
 const removeAnimalType = `-- name: RemoveAnimalType :one
 UPDATE "AnimalType"
 SET deleted=true

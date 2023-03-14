@@ -36,6 +36,7 @@ type Animal interface {
 	GetList(input *models.GetAnimalsInput) ([]queries.Animal, error)
 	Create(input *models.CreateAnimalInput) (*queries.Animal, error)
 	Update(animalID int64, input *models.UpdateAnimalInput) (*queries.Animal, error)
+	Remove(animalID int64) error
 }
 
 type AnimalType interface {
