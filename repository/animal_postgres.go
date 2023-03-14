@@ -10,6 +10,31 @@ type AnimalPostgres struct {
 	db *queries.Queries
 }
 
+func (r *AnimalPostgres) LinkAnimalType(animalID int64, typeID int64) error {
+	_, err := r.db.LinkAnimalTypeToAnimal(context.Background(), queries.LinkAnimalTypeToAnimalParams{
+		Animal:     animalID,
+		AnimalType: typeID,
+	})
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (r *AnimalPostgres) IsLinkedAnimalType(animalID int64, typeID int64) (bool, error) {
+	isLinked, err := r.db.IsLinkedAnimalType(context.Background(), queries.IsLinkedAnimalTypeParams{
+		Animal:     animalID,
+		AnimalType: typeID,
+	})
+	if err != nil {
+		logrus.Error(err.Error())
+		return false, err
+	}
+
+	return isLinked, nil
+}
+
 func (r *AnimalPostgres) Remove(animalID int64) error {
 	_, err := r.db.RemoveAnimal(context.Background(), animalID)
 	if err != nil {

@@ -759,6 +759,27 @@ func (q *Queries) IsLinkedAnimalToVisitedLocation(ctx context.Context, arg IsLin
 	return exists, err
 }
 
+const isLinkedAnimalType = `-- name: IsLinkedAnimalType :one
+SELECT EXISTS (
+  SELECT 1
+  FROM "AnimalToType"
+  WHERE animal=$1
+  AND animal_type=$2
+)
+`
+
+type IsLinkedAnimalTypeParams struct {
+	Animal     int64
+	AnimalType int64
+}
+
+func (q *Queries) IsLinkedAnimalType(ctx context.Context, arg IsLinkedAnimalTypeParams) (bool, error) {
+	row := q.db.QueryRowContext(ctx, isLinkedAnimalType, arg.Animal, arg.AnimalType)
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
+}
+
 const isLocationChippingAnimal = `-- name: IsLocationChippingAnimal :one
 SELECT EXISTS(SELECT 1 FROM "Animal" WHERE "Animal".chipping_location = "LocationPoint".id)
 FROM "LocationPoint"
@@ -783,6 +804,24 @@ func (q *Queries) IsLocationVisitedAnimal(ctx context.Context, id int64) (bool, 
 	var exists bool
 	err := row.Scan(&exists)
 	return exists, err
+}
+
+const linkAnimalTypeToAnimal = `-- name: LinkAnimalTypeToAnimal :one
+INSERT INTO "AnimalToType" (animal, animal_type)
+VALUES ($1, $2)
+RETURNING animal, animal_type
+`
+
+type LinkAnimalTypeToAnimalParams struct {
+	Animal     int64
+	AnimalType int64
+}
+
+func (q *Queries) LinkAnimalTypeToAnimal(ctx context.Context, arg LinkAnimalTypeToAnimalParams) (AnimalToType, error) {
+	row := q.db.QueryRowContext(ctx, linkAnimalTypeToAnimal, arg.Animal, arg.AnimalType)
+	var i AnimalToType
+	err := row.Scan(&i.Animal, &i.AnimalType)
+	return i, err
 }
 
 const removeAccount = `-- name: RemoveAccount :one

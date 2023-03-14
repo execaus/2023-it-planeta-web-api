@@ -298,41 +298,16 @@ func (h *Handler) updateAnimal(c *gin.Context) {
 		return
 	}
 
-	animal, err := h.services.Animal.Update(animalID, &input)
+	_, err = h.services.Animal.Update(animalID, &input)
 	if err != nil {
 		h.sendInternalServerError(c)
 		return
 	}
 
-	animalTypes, err := h.services.AnimalType.GetByAnimalID(animalID)
-	if err != nil {
+	var output models.UpdateAnimalOutput
+	if err = output.Load(h.services, animalID); err != nil {
 		h.sendInternalServerError(c)
 		return
-	}
-
-	animalTypesID := make([]int64, len(animalTypes))
-	for i, animalType := range animalTypes {
-		animalTypesID[i] = animalType.AnimalType
-	}
-
-	visitedLocationsID := make([]int64, len(visitedLocations))
-	for i, location := range visitedLocations {
-		visitedLocationsID[i] = location.ID
-	}
-
-	output := models.UpdateAnimalOutput{
-		ID:                 animal.ID,
-		AnimalTypes:        animalTypesID,
-		Weight:             animal.Weight,
-		Length:             animal.Length,
-		Height:             animal.Height,
-		Gender:             animal.Gender,
-		LifeStatus:         animal.LifeStatus,
-		ChippingDateTime:   utils.ConvertDateToISO8601(animal.ChippingDate),
-		ChipperID:          animal.Chipper,
-		ChippingLocationID: animal.ChippingLocation,
-		VisitedLocations:   visitedLocationsID,
-		DeathDateTime:      utils.ConvertNullDateToISO8601(animal.DeathDate),
 	}
 
 	h.sendOKWithBody(c, &output)

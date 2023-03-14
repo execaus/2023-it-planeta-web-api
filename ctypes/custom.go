@@ -1,3 +1,3 @@
-package ctype
+package ctypes
 
 type TimeOrNil = interface{}

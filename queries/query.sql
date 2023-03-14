@@ -149,6 +149,19 @@ SELECT EXISTS (
   WHERE animal_type=$1
 );
 
+-- name: IsLinkedAnimalType :one
+SELECT EXISTS (
+  SELECT 1
+  FROM "AnimalToType"
+  WHERE animal=$1
+  AND animal_type=$2
+);
+
+-- name: LinkAnimalTypeToAnimal :one
+INSERT INTO "AnimalToType" (animal, animal_type)
+VALUES ($1, $2)
+RETURNING *;
+
 -- name: RemoveAnimalType :one
 UPDATE "AnimalType"
 SET deleted=true

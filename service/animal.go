@@ -14,6 +14,14 @@ type AnimalService struct {
 	repo repository.Animal
 }
 
+func (s *AnimalService) LinkAnimalType(animalID int64, typeID int64) error {
+	return s.repo.LinkAnimalType(animalID, typeID)
+}
+
+func (s *AnimalService) IsLinkedAnimalType(animalID int64, typeID int64) (bool, error) {
+	return s.repo.IsLinkedAnimalType(animalID, typeID)
+}
+
 func (s *AnimalService) Remove(animalID int64) error {
 	return s.repo.Remove(animalID)
 }

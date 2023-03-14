@@ -1,7 +1,7 @@
 package utils
 
 import (
-	"2023-it-planeta-web-api/ctype"
+	"2023-it-planeta-web-api/ctypes"
 	"database/sql"
 	"errors"
 	"github.com/gin-gonic/gin"
@@ -18,7 +18,7 @@ func ConvertDateToISO8601(date time.Time) string {
 	return date.Format(time.RFC3339)
 }
 
-func ConvertNullDateToISO8601(date sql.NullTime) ctype.TimeOrNil {
+func ConvertNullDateToISO8601(date sql.NullTime) ctypes.TimeOrNil {
 	if !date.Valid {
 		return nil
 	}

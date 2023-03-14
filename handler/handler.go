@@ -53,12 +53,12 @@ func (h *Handler) InitRoutes() *gin.Engine {
 				visitedLocation.DELETE("/:visitedPointId", h.removeVisitedLocation)
 			}
 
-			// types := animalID.Group("/types")
-			// {
-			// types.POST("/:typeId", h.appendAnimalTypeInAnimal)
-			// types.PUT("", h.updateAnimalTypeInAnimal)
-			// types.DELETE("/:typeId", h.removeAnimalTypeInAnimal)
-			// }
+			types := animalID.Group("/types")
+			{
+				types.POST("/:typeId", h.linkAnimalTypeToAnimal)
+				// types.PUT("", h.updateAnimalTypeInAnimal)
+				// types.DELETE("/:typeId", h.removeAnimalTypeInAnimal)
+			}
 		}
 
 		animalType := animal.Group("/types")

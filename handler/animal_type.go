@@ -156,3 +156,66 @@ func (h *Handler) removeAnimalType(c *gin.Context) {
 
 	h.sendOk(c)
 }
+
+func (h *Handler) linkAnimalTypeToAnimal(c *gin.Context) {
+	animalID, err := utils.GetNumberParam(c, "animalId")
+	if err != nil {
+		h.sendBadRequest(c, err.Error())
+		return
+	}
+
+	typeID, err := utils.GetNumberParam(c, "typeId")
+	if err != nil {
+		h.sendBadRequest(c, err.Error())
+		return
+	}
+
+	// 404 Животное с animalId не найдено
+	isExistAnimal, err := h.services.Animal.IsExistByID(animalID)
+	if err != nil {
+		h.sendInternalServerError(c)
+		return
+	}
+
+	if !isExistAnimal {
+		h.sendNotFound(c)
+		return
+	}
+
+	// 404 Тип животного с typeId не найден
+	isExistType, err := h.services.AnimalType.IsExistByID(typeID)
+	if err != nil {
+		h.sendInternalServerError(c)
+		return
+	}
+
+	if !isExistType {
+		h.sendNotFound(c)
+		return
+	}
+
+	// 409 Тип животного с typeId уже есть у животного с animalId
+	isLinked, err := h.services.Animal.IsLinkedAnimalType(animalID, typeID)
+	if err != nil {
+		h.sendInternalServerError(c)
+		return
+	}
+
+	if isLinked {
+		h.sendConflict(c)
+		return
+	}
+
+	if err = h.services.Animal.LinkAnimalType(animalID, typeID); err != nil {
+		h.sendInternalServerError(c)
+		return
+	}
+
+	var output models.LinkAnimalTypeToAnimalOutput
+	if err = output.Load(h.services, animalID); err != nil {
+		h.sendInternalServerError(c)
+		return
+	}
+
+	h.sendOKWithBody(c, &output)
+}
