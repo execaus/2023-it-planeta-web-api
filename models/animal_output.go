@@ -6,7 +6,7 @@ import (
 	"2023-it-planeta-web-api/utils"
 )
 
-type outputAnimal struct {
+type OutputAnimal struct {
 	ID                 int64            `json:"id"`
 	AnimalTypes        []int64          `json:"animalTypes"`
 	Weight             float64          `json:"weight"`
@@ -21,7 +21,7 @@ type outputAnimal struct {
 	DeathDateTime      ctypes.TimeOrNil `json:"deathDateTime"`
 }
 
-func (a *outputAnimal) Load(services *service.Service, animalID int64) error {
+func (a *OutputAnimal) Load(services *service.Service, animalID int64) error {
 	animal, err := services.Animal.Get(animalID)
 	if err != nil {
 		return err

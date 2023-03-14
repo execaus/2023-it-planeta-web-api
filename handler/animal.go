@@ -8,53 +8,16 @@ import (
 )
 
 func (h *Handler) getAnimal(c *gin.Context) {
-	id, err := utils.GetNumberParam(c, "animalId")
+	animalID, err := utils.GetNumberParam(c, "animalId")
 	if err != nil {
 		h.sendBadRequest(c, err.Error())
 		return
 	}
 
-	animal, err := h.services.Animal.Get(id)
-	if err != nil {
+	var output models.GetAnimalOutput
+	if err = output.Load(h.services, animalID); err != nil {
 		h.sendInternalServerError(c)
 		return
-	}
-
-	animalTypes, err := h.services.AnimalType.GetByAnimalID(id)
-	if err != nil {
-		h.sendInternalServerError(c)
-		return
-	}
-
-	visitedLocations, err := h.services.Location.GetVisitedAnimal(id)
-	if err != nil {
-		h.sendInternalServerError(c)
-		return
-	}
-
-	animalTypesID := make([]int64, len(animalTypes))
-	for i, animalType := range animalTypes {
-		animalTypesID[i] = animalType.AnimalType
-	}
-
-	visitedLocationsID := make([]int64, len(visitedLocations))
-	for i, location := range visitedLocations {
-		visitedLocationsID[i] = location.ID
-	}
-
-	output := models.GetAnimalOutput{
-		ID:                 animal.ID,
-		AnimalTypes:        animalTypesID,
-		Weight:             animal.Weight,
-		Length:             animal.Length,
-		Height:             animal.Height,
-		Gender:             animal.Gender,
-		LifeStatus:         animal.LifeStatus,
-		ChippingDateTime:   utils.ConvertDateToISO8601(animal.ChippingDate),
-		ChipperID:          animal.Chipper,
-		ChippingLocationID: animal.ChippingLocation,
-		VisitedLocations:   visitedLocationsID,
-		DeathDateTime:      utils.ConvertNullDateToISO8601(animal.DeathDate),
 	}
 
 	h.sendOKWithBody(c, &output)
@@ -79,44 +42,15 @@ func (h *Handler) getAnimals(c *gin.Context) {
 		return
 	}
 
-	output := make([]*models.GetAnimalsOutput, len(animals))
+	var output models.GetAnimalsOutput
 	for i, animal := range animals {
-		animalTypes, err := h.services.AnimalType.GetByAnimalID(animal.ID)
-		if err != nil {
+		var outputAnimal models.OutputAnimal
+		if err = outputAnimal.Load(h.services, animal.ID); err != nil {
 			h.sendInternalServerError(c)
 			return
 		}
 
-		visitedLocations, err := h.services.Location.GetVisitedAnimal(animal.ID)
-		if err != nil {
-			h.sendInternalServerError(c)
-			return
-		}
-
-		animalTypesID := make([]int64, len(animalTypes))
-		for i, animalType := range animalTypes {
-			animalTypesID[i] = animalType.AnimalType
-		}
-
-		visitedLocationsID := make([]int64, len(visitedLocations))
-		for i, location := range visitedLocations {
-			visitedLocationsID[i] = location.ID
-		}
-
-		output[i] = &models.GetAnimalsOutput{
-			ID:                 animal.ID,
-			AnimalTypes:        animalTypesID,
-			Weight:             animal.Weight,
-			Length:             animal.Length,
-			Height:             animal.Height,
-			Gender:             animal.Gender,
-			LifeStatus:         animal.LifeStatus,
-			ChippingDateTime:   utils.ConvertDateToISO8601(animal.ChippingDate),
-			ChipperID:          animal.Chipper,
-			ChippingLocationID: animal.ChippingLocation,
-			VisitedLocations:   visitedLocationsID,
-			DeathDateTime:      utils.ConvertNullDateToISO8601(animal.DeathDate),
-		}
+		output[i] = &outputAnimal
 	}
 
 	h.sendOKWithBody(c, output)
@@ -185,35 +119,10 @@ func (h *Handler) createAnimal(c *gin.Context) {
 		return
 	}
 
-	visitedLocations, err := h.services.Animal.GetVisitedLocations(animal.ID)
-	if err != nil {
+	var output models.CreateAnimalOutput
+	if err = output.Load(h.services, animal.ID); err != nil {
 		h.sendInternalServerError(c)
 		return
-	}
-
-	visitedLocationID := make([]int64, len(visitedLocations))
-	for i, location := range visitedLocations {
-		visitedLocationID[i] = location.ID
-	}
-
-	animalsTypeID := make([]int64, len(input.AnimalTypes))
-	for i, animalType := range input.AnimalTypes {
-		animalsTypeID[i] = *animalType
-	}
-
-	output := models.CreateAnimalOutput{
-		ID:                 animal.ID,
-		AnimalTypes:        animalsTypeID,
-		Weight:             animal.Weight,
-		Length:             animal.Length,
-		Height:             animal.Height,
-		Gender:             animal.Gender,
-		LifeStatus:         animal.LifeStatus,
-		ChippingDateTime:   utils.ConvertDateToISO8601(animal.ChippingDate),
-		ChipperID:          animal.Chipper,
-		ChippingLocationID: animal.ChippingLocation,
-		VisitedLocations:   visitedLocationID,
-		DeathDateTime:      nil,
 	}
 
 	h.sendOKWithBody(c, &output)

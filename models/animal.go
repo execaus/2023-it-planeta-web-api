@@ -2,25 +2,11 @@ package models
 
 import (
 	"2023-it-planeta-web-api/constants"
-	"2023-it-planeta-web-api/ctypes"
 	"2023-it-planeta-web-api/utils"
 	"errors"
 )
 
-type GetAnimalOutput struct {
-	ID                 int64            `json:"id,omitempty"`
-	AnimalTypes        []int64          `json:"animalTypes,omitempty"`
-	Weight             float64          `json:"weight,omitempty"`
-	Length             float64          `json:"length,omitempty"`
-	Height             float64          `json:"height,omitempty"`
-	Gender             string           `json:"gender,omitempty"`
-	LifeStatus         string           `json:"lifeStatus,omitempty"`
-	ChippingDateTime   string           `json:"chippingDateTime,omitempty"`
-	ChipperID          int64            `json:"chipperId,omitempty"`
-	ChippingLocationID int64            `json:"chippingLocationId,omitempty"`
-	VisitedLocations   []int64          `json:"visitedLocations,omitempty"`
-	DeathDateTime      ctypes.TimeOrNil `json:"deathDateTime,omitempty"`
-}
+type GetAnimalOutput = OutputAnimal
 
 type GetAnimalsInput struct {
 	StartDateTime      *string `form:"startDateTime"`
@@ -73,20 +59,7 @@ func (i *GetAnimalsInput) Validate() error {
 	return nil
 }
 
-type GetAnimalsOutput struct {
-	ID                 int64            `json:"id,omitempty"`
-	AnimalTypes        []int64          `json:"animalTypes,omitempty"`
-	Weight             float64          `json:"weight,omitempty"`
-	Length             float64          `json:"length,omitempty"`
-	Height             float64          `json:"height,omitempty"`
-	Gender             string           `json:"gender,omitempty"`
-	LifeStatus         string           `json:"lifeStatus,omitempty"`
-	ChippingDateTime   string           `json:"chippingDateTime,omitempty"`
-	ChipperID          int64            `json:"chipperId,omitempty"`
-	ChippingLocationID int64            `json:"chippingLocationId,omitempty"`
-	VisitedLocations   []int64          `json:"visitedLocations,omitempty"`
-	DeathDateTime      ctypes.TimeOrNil `json:"deathDateTime,omitempty"`
-}
+type GetAnimalsOutput = []*OutputAnimal
 
 type CreateAnimalInput struct {
 	AnimalTypes        []*int64 `json:"animalTypes" binding:"required"`
@@ -119,20 +92,7 @@ func (i *CreateAnimalInput) Validate() error {
 	return nil
 }
 
-type CreateAnimalOutput struct {
-	ID                 int64            `json:"id,omitempty"`
-	AnimalTypes        []int64          `json:"animalTypes,omitempty"`
-	Weight             float64          `json:"weight,omitempty"`
-	Length             float64          `json:"length,omitempty"`
-	Height             float64          `json:"height,omitempty"`
-	Gender             string           `json:"gender,omitempty"`
-	LifeStatus         string           `json:"lifeStatus,omitempty"`
-	ChippingDateTime   string           `json:"chippingDateTime,omitempty"`
-	ChipperID          int64            `json:"chipperId,omitempty"`
-	ChippingLocationID int64            `json:"chippingLocationId,omitempty"`
-	VisitedLocations   []int64          `json:"visitedLocations,omitempty"`
-	DeathDateTime      ctypes.TimeOrNil `json:"deathDateTime,omitempty"`
-}
+type CreateAnimalOutput = OutputAnimal
 
 type UpdateAnimalInput struct {
 	Weight             float64 `json:"weight" binding:"required,min=1"`
@@ -156,13 +116,13 @@ func (i *UpdateAnimalInput) Validate() error {
 	return nil
 }
 
-type UpdateAnimalOutput = outputAnimal
-type LinkAnimalTypeToAnimalOutput = outputAnimal
+type UpdateAnimalOutput = OutputAnimal
+type LinkAnimalTypeToAnimalOutput = OutputAnimal
 
 type UpdateAnimalTypeToAnimalInput struct {
 	OldTypeId int64 `json:"oldTypeId" binding:"required,min=1"`
 	NewTypeId int64 `json:"newTypeId" binding:"required,min=1"`
 }
 
-type UpdateAnimalTypeToAnimalOutput = outputAnimal
-type RemoveAnimalTypeToAnimalOutput = outputAnimal
+type UpdateAnimalTypeToAnimalOutput = OutputAnimal
+type RemoveAnimalTypeToAnimalOutput = OutputAnimal
