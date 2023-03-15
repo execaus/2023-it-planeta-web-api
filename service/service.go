@@ -9,6 +9,7 @@ import (
 
 type Account interface {
 	IsExistByEmail(email string) (bool, error)
+	IsExistByEmailExcept(email string, animalID int64) (bool, error)
 	IsExistByID(id int64) (bool, error)
 	Registration(input *models.RegistrationAccountInput) (*models.RegistrationAccountOutput, error)
 	Get(id int64) (*queries.Account, error)
@@ -16,6 +17,7 @@ type Account interface {
 	Update(id int64, input *models.UpdateAccountInput) (*queries.Account, error)
 	Remove(id int64) error
 	Auth(login string, password string) (*queries.Account, error)
+	IsLinkedAnimal(accountID int64) (bool, error)
 }
 
 type Animal interface {

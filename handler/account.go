@@ -93,13 +93,13 @@ func (h *Handler) getAccounts(c *gin.Context) {
 }
 
 func (h *Handler) updateAccount(c *gin.Context) {
-	id, err := utils.GetNumberParam(c, "accountId")
+	animalID, err := utils.GetNumberParam(c, "accountId")
 	if err != nil {
 		h.sendBadRequest(c, err.Error())
 		return
 	}
 
-	isExist, err := h.services.Account.IsExistByID(id)
+	isExist, err := h.services.Account.IsExistByID(animalID)
 	if err != nil {
 		h.sendInternalServerError(c)
 		return
@@ -116,9 +116,19 @@ func (h *Handler) updateAccount(c *gin.Context) {
 		return
 	}
 
-	// TODO Обновление не своего аккаунта, sendForbidden
+	// 403 Обновление не своего аккаунта
+	email, err := h.getAccountContext(c)
+	if err != nil {
+		h.sendInternalServerError(c)
+		return
+	}
 
-	isExist, err = h.services.Account.IsExistByEmail(input.Email)
+	if input.Email != email {
+		h.sendForbidden(c)
+		return
+	}
+
+	isExist, err = h.services.Account.IsExistByEmailExcept(input.Email, animalID)
 	if err != nil {
 		h.sendInternalServerError(c)
 		return
@@ -129,7 +139,7 @@ func (h *Handler) updateAccount(c *gin.Context) {
 		return
 	}
 
-	account, err := h.services.Account.Update(id, &input)
+	account, err := h.services.Account.Update(animalID, &input)
 	if err != nil {
 		h.sendInternalServerError(c)
 		return
@@ -145,13 +155,13 @@ func (h *Handler) updateAccount(c *gin.Context) {
 }
 
 func (h *Handler) deleteAccount(c *gin.Context) {
-	id, err := utils.GetNumberParam(c, "accountId")
+	accountID, err := utils.GetNumberParam(c, "accountId")
 	if err != nil {
 		h.sendBadRequest(c, err.Error())
 		return
 	}
 
-	isExist, err := h.services.Account.IsExistByID(id)
+	isExist, err := h.services.Account.IsExistByID(accountID)
 	if err != nil {
 		h.sendInternalServerError(c)
 		return
@@ -162,9 +172,37 @@ func (h *Handler) deleteAccount(c *gin.Context) {
 		return
 	}
 
-	// TODO удаление не своего аккаунта
+	// 400 Аккаунт связан с животным
+	isLinkedAnimal, err := h.services.Account.IsLinkedAnimal(accountID)
+	if err != nil {
+		h.sendInternalServerError(c)
+		return
+	}
 
-	if err = h.services.Account.Remove(id); err != nil {
+	if isLinkedAnimal {
+		h.sendBadRequest(c, "the account is associated with an animal")
+		return
+	}
+
+	// 403 Удаление не своего аккаунта
+	email, err := h.getAccountContext(c)
+	if err != nil {
+		h.sendUnauthorized(c)
+		return
+	}
+
+	account, err := h.services.Account.Get(accountID)
+	if err != nil {
+		h.sendInternalServerError(c)
+		return
+	}
+
+	if account.Email != email {
+		h.sendForbidden(c)
+		return
+	}
+
+	if err = h.services.Account.Remove(accountID); err != nil {
 		h.sendInternalServerError(c)
 		return
 	}

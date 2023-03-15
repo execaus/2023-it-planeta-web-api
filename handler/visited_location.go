@@ -126,7 +126,7 @@ func (h *Handler) createVisitedLocation(c *gin.Context) {
 		return
 	}
 
-	if currentLocation.Location == pointID {
+	if currentLocation != nil && currentLocation.Location == pointID {
 		h.sendBadRequest(c, "there is already an animal at the location point")
 		return
 	}
@@ -143,7 +143,7 @@ func (h *Handler) createVisitedLocation(c *gin.Context) {
 		LocationPointID:              visitedLocation.Location,
 	}
 
-	h.sendOKWithBody(c, &output)
+	h.sendCreatedWithBody(c, &output)
 }
 
 func (h *Handler) updateVisitedLocation(c *gin.Context) {

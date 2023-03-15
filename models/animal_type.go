@@ -6,7 +6,7 @@ type GetAnimalTypeOutput struct {
 }
 
 type CreateAnimalTypeInput struct {
-	Type string `json:"type" binding:"required,excludesall=' ',printascii"`
+	Type string `json:"type" binding:"required,excludesall= ,printascii"`
 }
 
 type CreateAnimalTypeOutput struct {
@@ -15,7 +15,7 @@ type CreateAnimalTypeOutput struct {
 }
 
 type UpdateAnimalTypeInput struct {
-	Type string `json:"type" binding:"required,excludesall=' ',printascii"`
+	Type string `json:"type" binding:"required,excludesall= ,printascii"`
 }
 
 type UpdateAnimalTypeOutput struct {

@@ -14,6 +14,14 @@ type AccountService struct {
 	repo repository.Account
 }
 
+func (s *AccountService) IsLinkedAnimal(accountID int64) (bool, error) {
+	return s.repo.IsLinkedAnimal(accountID)
+}
+
+func (s *AccountService) IsExistByEmailExcept(email string, animalID int64) (bool, error) {
+	return s.repo.IsExistByEmailExcept(email, animalID)
+}
+
 func (s *AccountService) Auth(login string, password string) (*queries.Account, error) {
 	account, err := s.repo.GetByEmail(login)
 	if err != nil {
@@ -26,6 +34,7 @@ func (s *AccountService) Auth(login string, password string) (*queries.Account, 
 
 	isCompare, err := s.ComparePassword(password, account.Password)
 	if err != nil {
+		exloggo.Error(err.Error())
 		return nil, err
 	}
 
@@ -41,6 +50,12 @@ func (s *AccountService) Remove(id int64) error {
 }
 
 func (s *AccountService) Update(id int64, input *models.UpdateAccountInput) (*queries.Account, error) {
+	passwordHash, err := s.GetHashPassword(input.Password)
+	if err != nil {
+		return nil, err
+	}
+	input.Password = passwordHash
+
 	params := queries.UpdateAccountParams{
 		FirstName: input.FirstName,
 		LastName:  input.LastName,
@@ -115,6 +130,9 @@ func (s *AccountService) Registration(
 	input *models.RegistrationAccountInput,
 ) (*models.RegistrationAccountOutput, error) {
 	passwordHash, err := s.GetHashPassword(input.Password)
+	if err != nil {
+		return nil, err
+	}
 	input.Password = passwordHash
 
 	account, err := s.repo.Registration(input)
@@ -137,6 +155,7 @@ func NewAccountService(repo repository.Account) *AccountService {
 func (s *AccountService) GetHashPassword(password string) (string, error) {
 	hash, err := bcrypt.GenerateFromPassword([]byte(password), 10)
 	if err != nil {
+		exloggo.Error(err.Error())
 		return "", err
 	}
 

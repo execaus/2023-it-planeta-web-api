@@ -12,6 +12,27 @@ type AccountPostgres struct {
 	db *queries.Queries
 }
 
+func (r *AccountPostgres) IsLinkedAnimal(accountID int64) (bool, error) {
+	isLinked, err := r.db.IsAccountLinkedAnimal(context.Background(), accountID)
+	if err != nil {
+		exloggo.Error(err.Error())
+		return false, err
+	}
+	return isLinked, nil
+}
+
+func (r *AccountPostgres) IsExistByEmailExcept(email string, animalID int64) (bool, error) {
+	isExist, err := r.db.IsExistAccountByEmailExcept(context.Background(), queries.IsExistAccountByEmailExceptParams{
+		Email: email,
+		ID:    animalID,
+	})
+	if err != nil {
+		exloggo.Error(err.Error())
+		return false, err
+	}
+	return isExist, nil
+}
+
 func (r *AccountPostgres) GetByEmail(login string) (*queries.Account, error) {
 	account, err := r.db.GetAccountByEmail(context.Background(), login)
 	if err != nil {

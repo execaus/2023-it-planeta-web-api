@@ -137,7 +137,7 @@ func (h *Handler) createAnimal(c *gin.Context) {
 		return
 	}
 
-	h.sendOKWithBody(c, &output)
+	h.sendCreatedWithBody(c, &output)
 }
 
 func (h *Handler) updateAnimal(c *gin.Context) {
@@ -332,7 +332,7 @@ func (h *Handler) linkAnimalTypeToAnimal(c *gin.Context) {
 		return
 	}
 
-	h.sendOKWithBody(c, &output)
+	h.sendCreatedWithBody(c, &output)
 }
 
 func (h *Handler) updateAnimalTypeToAnimal(c *gin.Context) {

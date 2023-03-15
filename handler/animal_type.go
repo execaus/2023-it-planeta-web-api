@@ -52,7 +52,7 @@ func (h *Handler) createAnimalType(c *gin.Context) {
 		return
 	}
 
-	if !isExist {
+	if isExist {
 		h.sendConflict(c)
 		return
 	}

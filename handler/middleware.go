@@ -1,7 +1,10 @@
 package handler
 
 import (
+	"2023-it-planeta-web-api/constants"
 	"encoding/base64"
+	"errors"
+	"github.com/execaus/exloggo"
 	"github.com/gin-gonic/gin"
 	"strings"
 )
@@ -42,6 +45,8 @@ func (h *Handler) requiredAuthMiddleware(c *gin.Context) {
 		return
 	}
 
+	h.setAccountContext(c, account.Email)
+
 	c.Next()
 }
 
@@ -81,5 +86,20 @@ func (h *Handler) notAuthMiddleware(c *gin.Context) {
 		return
 	}
 
+	h.setAccountContext(c, account.Email)
+
 	c.Next()
+}
+
+func (h *Handler) setAccountContext(c *gin.Context, email string) {
+	c.Set(constants.AccountContextKey, email)
+}
+
+func (h *Handler) getAccountContext(c *gin.Context) (string, error) {
+	email := c.GetString(constants.AccountContextKey)
+	if email == "" {
+		exloggo.Error("account context not found")
+		return "", errors.New("account context not found")
+	}
+	return email, nil
 }

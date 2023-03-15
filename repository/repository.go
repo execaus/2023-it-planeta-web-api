@@ -14,6 +14,8 @@ type Account interface {
 	Update(params *queries.UpdateAccountParams) (*queries.Account, error)
 	Remove(id int64) error
 	GetByEmail(login string) (*queries.Account, error)
+	IsExistByEmailExcept(email string, animalID int64) (bool, error)
+	IsLinkedAnimal(accountID int64) (bool, error)
 }
 
 type Animal interface {

@@ -3,6 +3,7 @@ package repository
 import (
 	"2023-it-planeta-web-api/queries"
 	"context"
+	"database/sql"
 	"github.com/execaus/exloggo"
 )
 
@@ -210,6 +211,9 @@ func (r *AnimalPostgres) CreateVisitedLocation(animalID int64, pointID int64) (*
 func (r *AnimalPostgres) GetCurrentLocation(animalID int64) (*queries.AnimalVisitedLocation, error) {
 	point, err := r.db.GetCurrentLocation(context.Background(), animalID)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
 		exloggo.Error(err.Error())
 		return nil, err
 	}

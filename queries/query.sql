@@ -16,6 +16,22 @@ SELECT EXISTS (
   AND deleted=false
 );
 
+-- name: IsExistAccountByEmailExcept :one
+SELECT EXISTS (
+  SELECT 1
+  FROM "Account"
+  WHERE email=$1
+  AND id!=$2
+  AND deleted=false
+);
+
+-- name: IsAccountLinkedAnimal :one
+SELECT EXISTS (
+  SELECT 1
+  FROM "Animal"
+  WHERE chipper=$1
+);
+
 -- name: IsExistAccountByID :one
 SELECT EXISTS (
   SELECT 1

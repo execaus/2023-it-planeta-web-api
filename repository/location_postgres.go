@@ -3,6 +3,7 @@ package repository
 import (
 	"2023-it-planeta-web-api/queries"
 	"context"
+	"database/sql"
 	"github.com/execaus/exloggo"
 )
 
@@ -22,6 +23,9 @@ func (r *LocationPostgres) Remove(id int64) error {
 func (r *LocationPostgres) IsVisitedAnimal(id int64) (bool, error) {
 	isExist, err := r.db.IsLocationVisitedAnimal(context.Background(), id)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return false, nil
+		}
 		exloggo.Error(err.Error())
 		return false, err
 	}
@@ -32,6 +36,9 @@ func (r *LocationPostgres) IsVisitedAnimal(id int64) (bool, error) {
 func (r *LocationPostgres) IsAnimalChipping(id int64) (bool, error) {
 	isExist, err := r.db.IsLocationChippingAnimal(context.Background(), id)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return false, nil
+		}
 		exloggo.Error(err.Error())
 		return false, err
 	}

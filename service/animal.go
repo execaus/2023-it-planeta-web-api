@@ -216,7 +216,8 @@ func (s *AnimalService) GetVisitedLocationList(
 	}
 
 	if input.StartDateTime == nil {
-		startDateTime = nil
+		t := time.Unix(0, 0)
+		startDateTime = &t
 	} else {
 		parseDate, err := time.Parse(time.RFC3339, *input.StartDateTime)
 		if err != nil {
@@ -226,7 +227,8 @@ func (s *AnimalService) GetVisitedLocationList(
 	}
 
 	if input.EndDateTime == nil {
-		endDateTime = nil
+		t := time.Now()
+		endDateTime = &t
 	} else {
 		parseDate, err := time.Parse(time.RFC3339, *input.EndDateTime)
 		if err != nil {

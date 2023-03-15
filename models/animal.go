@@ -64,9 +64,9 @@ type GetAnimalsOutput = []*models_output.OutputAnimal
 
 type CreateAnimalInput struct {
 	AnimalTypes        []*int64 `json:"animalTypes" binding:"required"`
-	Weight             float64  `json:"weight" binding:"required,min=1"`
-	Length             float64  `json:"length" binding:"required,min=1"`
-	Height             float64  `json:"height" binding:"required,min=1"`
+	Weight             float64  `json:"weight" binding:"required,min=0"`
+	Length             float64  `json:"length" binding:"required,min=0"`
+	Height             float64  `json:"height" binding:"required,min=0"`
 	Gender             string   `json:"gender" binding:"required"`
 	ChipperID          int64    `json:"chipperId" binding:"required,min=1"`
 	ChippingLocationID int64    `json:"chippingLocationId" binding:"required,min=1"`

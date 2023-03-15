@@ -608,6 +608,21 @@ func (q *Queries) GetVisitedLocations(ctx context.Context, animal int64) ([]Anim
 	return items, nil
 }
 
+const isAccountLinkedAnimal = `-- name: IsAccountLinkedAnimal :one
+SELECT EXISTS (
+  SELECT 1
+  FROM "Animal"
+  WHERE chipper=$1
+)
+`
+
+func (q *Queries) IsAccountLinkedAnimal(ctx context.Context, chipper int64) (bool, error) {
+	row := q.db.QueryRowContext(ctx, isAccountLinkedAnimal, chipper)
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
+}
+
 const isAnimalTypeLinkedAnimal = `-- name: IsAnimalTypeLinkedAnimal :one
 SELECT EXISTS (
   SELECT 1
@@ -634,6 +649,28 @@ SELECT EXISTS (
 
 func (q *Queries) IsExistAccountByEmail(ctx context.Context, email string) (bool, error) {
 	row := q.db.QueryRowContext(ctx, isExistAccountByEmail, email)
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
+}
+
+const isExistAccountByEmailExcept = `-- name: IsExistAccountByEmailExcept :one
+SELECT EXISTS (
+  SELECT 1
+  FROM "Account"
+  WHERE email=$1
+  AND id!=$2
+  AND deleted=false
+)
+`
+
+type IsExistAccountByEmailExceptParams struct {
+	Email string
+	ID    int64
+}
+
+func (q *Queries) IsExistAccountByEmailExcept(ctx context.Context, arg IsExistAccountByEmailExceptParams) (bool, error) {
+	row := q.db.QueryRowContext(ctx, isExistAccountByEmailExcept, arg.Email, arg.ID)
 	var exists bool
 	err := row.Scan(&exists)
 	return exists, err
