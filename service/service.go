@@ -2,6 +2,7 @@ package service
 
 import (
 	"2023-it-planeta-web-api/models"
+	"2023-it-planeta-web-api/models_output"
 	"2023-it-planeta-web-api/queries"
 	"2023-it-planeta-web-api/repository"
 )
@@ -41,6 +42,7 @@ type Animal interface {
 	LinkAnimalType(animalID int64, typeID int64) error
 	UpdateAnimalTypeToAnimal(animalID int64, input *models.UpdateAnimalTypeToAnimalInput) error
 	RemoveAnimalType(animalID int64, typeID int64) error
+	FillAnimalOutput(animal *models_output.OutputAnimal, services *Service, animalID int64) error
 }
 
 type AnimalType interface {

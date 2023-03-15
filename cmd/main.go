@@ -8,15 +8,14 @@ import (
 	"2023-it-planeta-web-api/server"
 	"2023-it-planeta-web-api/service"
 	"context"
-	"github.com/sirupsen/logrus"
+	"github.com/execaus/exloggo"
+
 	"os"
 	"os/signal"
 	"syscall"
 )
 
 func main() {
-	logrus.SetFormatter(&logrus.JSONFormatter{})
-
 	var serverInstance server.Server
 
 	env := models.LoadEnv()
@@ -40,7 +39,7 @@ func runServer(server *server.Server, handlers *handler.Handler, config *configs
 
 	if err := server.Run(config.Port, ginEngine); err != nil {
 		if err.Error() != "http: Server closed" {
-			logrus.Fatalf("error occurred while running http server: %s", err.Error())
+			exloggo.Fatalf("error occurred while running http server: %s", err.Error())
 		}
 	}
 }

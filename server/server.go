@@ -2,7 +2,7 @@ package server
 
 import (
 	"context"
-	"github.com/sirupsen/logrus"
+	"github.com/execaus/exloggo"
 	"net/http"
 	"time"
 )
@@ -25,18 +25,18 @@ func (s *Server) Run(port string, handler http.Handler) error {
 		ReadTimeout:    serverReadTimeout,
 		WriteTimeout:   serverWriteTimeout,
 	}
-	logrus.Info("server started successfully")
+	exloggo.Info("server started successfully")
 	return s.httpServer.ListenAndServe()
 }
 
 func (s *Server) Shutdown(ctx context.Context) {
-	logrus.Info("server shutdown process started")
+	exloggo.Info("server shutdown process started")
 
 	if err := s.httpServer.Shutdown(ctx); err != nil {
-		logrus.Error(err.Error())
+		exloggo.Error(err.Error())
 	} else {
-		logrus.Info("http listener shutdown successfully")
+		exloggo.Info("http listener shutdown successfully")
 	}
 
-	logrus.Info("server shutdown process completed successfully")
+	exloggo.Info("server shutdown process completed successfully")
 }

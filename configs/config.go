@@ -2,7 +2,8 @@ package configs
 
 import (
 	"encoding/json"
-	"github.com/sirupsen/logrus"
+	"github.com/execaus/exloggo"
+
 	"os"
 )
 
@@ -33,7 +34,7 @@ func LoadConfig() *Config {
 	config := Config{}
 	err := decoder.Decode(&config)
 	if err != nil {
-		logrus.Fatalf("parse config file: %s", err.Error())
+		exloggo.Fatalf("parse config file: %s", err.Error())
 	}
 
 	return &config

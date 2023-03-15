@@ -24,6 +24,6 @@ COPY --from=build ./app/main .
 COPY --from=build ./app/wait-for-it.sh ./wait-for-it.sh
 COPY --from=build ./app/configs/config.docker.json ./configs/config.json
 
-CMD ["./wait-for-it.sh", "database:5432", "-t", "10", "--", "/app/main"]
+CMD ["./wait-for-it.sh", "database:5432", "-t", "4", "--", "/app/main"]
 
 EXPOSE 8080

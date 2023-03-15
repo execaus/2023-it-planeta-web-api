@@ -3,15 +3,60 @@ package service
 import (
 	"2023-it-planeta-web-api/constants"
 	"2023-it-planeta-web-api/models"
+	"2023-it-planeta-web-api/models_output"
 	"2023-it-planeta-web-api/queries"
 	"2023-it-planeta-web-api/repository"
+	"2023-it-planeta-web-api/utils"
 	"database/sql"
-	"github.com/sirupsen/logrus"
+	"github.com/execaus/exloggo"
+
 	"time"
 )
 
 type AnimalService struct {
 	repo repository.Animal
+}
+
+func (s *AnimalService) FillAnimalOutput(output *models_output.OutputAnimal, services *Service, animalID int64) error {
+	animal, err := services.Animal.Get(animalID)
+	if err != nil {
+		return err
+	}
+
+	animalTypes, err := services.AnimalType.GetByAnimalID(animalID)
+	if err != nil {
+		return err
+	}
+
+	animalTypesID := make([]int64, len(animalTypes))
+	for i, animalType := range animalTypes {
+		animalTypesID[i] = animalType.AnimalType
+	}
+
+	visitedLocations, err := services.Animal.GetVisitedLocations(animalID)
+	if err != nil {
+		return err
+	}
+
+	visitedLocationsID := make([]int64, len(visitedLocations))
+	for i, location := range visitedLocations {
+		visitedLocationsID[i] = location.ID
+	}
+
+	output.ID = animal.ID
+	output.AnimalTypes = animalTypesID
+	output.Weight = animal.Weight
+	output.Length = animal.Length
+	output.Height = animal.Height
+	output.Gender = animal.Gender
+	output.LifeStatus = animal.LifeStatus
+	output.ChippingDateTime = utils.ConvertDateToISO8601(animal.ChippingDate)
+	output.ChipperID = animal.Chipper
+	output.ChippingLocationID = animal.ChippingLocation
+	output.VisitedLocations = visitedLocationsID
+	output.DeathDateTime = utils.ConvertNullDateToISO8601(animal.DeathDate)
+
+	return nil
 }
 
 func (s *AnimalService) RemoveAnimalType(animalID int64, typeID int64) error {
@@ -118,13 +163,13 @@ func (s *AnimalService) GetList(input *models.GetAnimalsInput) ([]queries.Animal
 
 	startDateTime, err := time.Parse(time.RFC3339, *input.StartDateTime)
 	if err != nil {
-		logrus.Error(err.Error())
+		exloggo.Error(err.Error())
 		return nil, err
 	}
 
 	endDateTime, err := time.Parse(time.RFC3339, *input.EndDateTime)
 	if err != nil {
-		logrus.Error(err.Error())
+		exloggo.Error(err.Error())
 		return nil, err
 	}
 
@@ -262,7 +307,7 @@ func (s *AnimalService) GetChippingLocation(animalID int64) (*queries.LocationPo
 func (s *AnimalService) IsDead(id int64) (bool, error) {
 	animal, err := s.repo.Get(id)
 	if err != nil {
-		logrus.Error(err.Error())
+		exloggo.Error(err.Error())
 		return false, err
 	}
 

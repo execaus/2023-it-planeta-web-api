@@ -3,6 +3,7 @@ package handler
 import (
 	"2023-it-planeta-web-api/constants"
 	"2023-it-planeta-web-api/models"
+	"2023-it-planeta-web-api/models_output"
 	"2023-it-planeta-web-api/utils"
 	"github.com/gin-gonic/gin"
 )
@@ -15,7 +16,7 @@ func (h *Handler) getAnimal(c *gin.Context) {
 	}
 
 	var output models.GetAnimalOutput
-	if err = output.Load(h.services, animalID); err != nil {
+	if err = h.services.Animal.FillAnimalOutput(&output, h.services, animalID); err != nil {
 		h.sendInternalServerError(c)
 		return
 	}
@@ -44,8 +45,8 @@ func (h *Handler) getAnimals(c *gin.Context) {
 
 	var output models.GetAnimalsOutput
 	for i, animal := range animals {
-		var outputAnimal models.OutputAnimal
-		if err = outputAnimal.Load(h.services, animal.ID); err != nil {
+		var outputAnimal models_output.OutputAnimal
+		if err = h.services.Animal.FillAnimalOutput(&outputAnimal, h.services, animal.ID); err != nil {
 			h.sendInternalServerError(c)
 			return
 		}
@@ -120,7 +121,7 @@ func (h *Handler) createAnimal(c *gin.Context) {
 	}
 
 	var output models.CreateAnimalOutput
-	if err = output.Load(h.services, animal.ID); err != nil {
+	if err = h.services.Animal.FillAnimalOutput(&output, h.services, animal.ID); err != nil {
 		h.sendInternalServerError(c)
 		return
 	}
@@ -214,7 +215,7 @@ func (h *Handler) updateAnimal(c *gin.Context) {
 	}
 
 	var output models.UpdateAnimalOutput
-	if err = output.Load(h.services, animalID); err != nil {
+	if err = h.services.Animal.FillAnimalOutput(&output, h.services, animalID); err != nil {
 		h.sendInternalServerError(c)
 		return
 	}
@@ -315,7 +316,7 @@ func (h *Handler) linkAnimalTypeToAnimal(c *gin.Context) {
 	}
 
 	var output models.LinkAnimalTypeToAnimalOutput
-	if err = output.Load(h.services, animalID); err != nil {
+	if err = h.services.Animal.FillAnimalOutput(&output, h.services, animalID); err != nil {
 		h.sendInternalServerError(c)
 		return
 	}
@@ -403,7 +404,7 @@ func (h *Handler) updateAnimalTypeToAnimal(c *gin.Context) {
 	}
 
 	var output models.UpdateAnimalTypeToAnimalOutput
-	if err = output.Load(h.services, animalID); err != nil {
+	if err = h.services.Animal.FillAnimalOutput(&output, h.services, animalID); err != nil {
 		h.sendInternalServerError(c)
 		return
 	}
@@ -478,7 +479,7 @@ func (h *Handler) removeAnimalTypeToAnimal(c *gin.Context) {
 	}
 
 	var output models.RemoveAnimalTypeToAnimalOutput
-	if err = output.Load(h.services, animalID); err != nil {
+	if err = h.services.Animal.FillAnimalOutput(&output, h.services, animalID); err != nil {
 		h.sendInternalServerError(c)
 		return
 	}

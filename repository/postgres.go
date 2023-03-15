@@ -6,8 +6,8 @@ import (
 	"2023-it-planeta-web-api/queries"
 	"database/sql"
 	"fmt"
+	"github.com/execaus/exloggo"
 	_ "github.com/lib/pq" //nolint:nolintlint,revive
-	"github.com/sirupsen/logrus"
 )
 
 const dbDriverName = "postgres"
@@ -28,10 +28,10 @@ func getConnectDatabase(env *models.Environment, config *configs.Config) *sql.DB
 		config.Postgres.SSLMode)
 	db, err := sql.Open(dbDriverName, connString)
 	if err != nil {
-		logrus.Fatalf(`database open connect: %s`, err.Error())
+		exloggo.Fatalf(`database open connect: %s`, err.Error())
 	}
 	if err = db.Ping(); err != nil {
-		logrus.Fatalf(`database open connect: %s`, err.Error())
+		exloggo.Fatalf(`database open connect: %s`, err.Error())
 	}
 	return db
 }

@@ -3,7 +3,7 @@ package repository
 import (
 	"2023-it-planeta-web-api/queries"
 	"context"
-	"github.com/sirupsen/logrus"
+	"github.com/execaus/exloggo"
 )
 
 type AnimalPostgres struct {
@@ -13,7 +13,7 @@ type AnimalPostgres struct {
 func (r *AnimalPostgres) RemoveAnimalType(params *queries.RemoveAnimalTypeToAnimalParams) error {
 	_, err := r.db.RemoveAnimalTypeToAnimal(context.Background(), *params)
 	if err != nil {
-		logrus.Error(err.Error())
+		exloggo.Error(err.Error())
 		return err
 	}
 	return nil
@@ -44,7 +44,7 @@ func (r *AnimalPostgres) IsLinkedAnimalType(animalID int64, typeID int64) (bool,
 		AnimalType: typeID,
 	})
 	if err != nil {
-		logrus.Error(err.Error())
+		exloggo.Error(err.Error())
 		return false, err
 	}
 
@@ -54,7 +54,7 @@ func (r *AnimalPostgres) IsLinkedAnimalType(animalID int64, typeID int64) (bool,
 func (r *AnimalPostgres) Remove(animalID int64) error {
 	_, err := r.db.RemoveAnimal(context.Background(), animalID)
 	if err != nil {
-		logrus.Error(err.Error())
+		exloggo.Error(err.Error())
 		return err
 	}
 
@@ -64,7 +64,7 @@ func (r *AnimalPostgres) Remove(animalID int64) error {
 func (r *AnimalPostgres) Update(params *queries.UpdateAnimalParams) (*queries.Animal, error) {
 	animal, err := r.db.UpdateAnimal(context.Background(), *params)
 	if err != nil {
-		logrus.Error(err.Error())
+		exloggo.Error(err.Error())
 		return nil, err
 	}
 
@@ -77,7 +77,7 @@ func (r *AnimalPostgres) BindAnimalType(animalID int64, animalType int64) (*quer
 		AnimalType: animalType,
 	})
 	if err != nil {
-		logrus.Error(err.Error())
+		exloggo.Error(err.Error())
 		return nil, err
 	}
 
@@ -87,7 +87,7 @@ func (r *AnimalPostgres) BindAnimalType(animalID int64, animalType int64) (*quer
 func (r *AnimalPostgres) Create(params *queries.CreateAnimalParams) (*queries.Animal, error) {
 	animal, err := r.db.CreateAnimal(context.Background(), *params)
 	if err != nil {
-		logrus.Error(err.Error())
+		exloggo.Error(err.Error())
 		return nil, err
 	}
 
@@ -97,7 +97,7 @@ func (r *AnimalPostgres) Create(params *queries.CreateAnimalParams) (*queries.An
 func (r *AnimalPostgres) GetList(params *queries.GetAnimalsParams) ([]queries.Animal, error) {
 	animals, err := r.db.GetAnimals(context.Background(), *params)
 	if err != nil {
-		logrus.Error(err.Error())
+		exloggo.Error(err.Error())
 		return nil, err
 	}
 
@@ -108,7 +108,7 @@ func (r *AnimalPostgres) GetVisitedLocationList(
 	params *queries.GetVisitedLocationListParams) ([]queries.AnimalVisitedLocation, error) {
 	visitedLocations, err := r.db.GetVisitedLocationList(context.Background(), *params)
 	if err != nil {
-		logrus.Error(err.Error())
+		exloggo.Error(err.Error())
 		return nil, err
 	}
 
@@ -118,7 +118,7 @@ func (r *AnimalPostgres) GetVisitedLocationList(
 func (r *AnimalPostgres) RemoveVisitedLocation(visitedLocationPointID int64) error {
 	_, err := r.db.RemoveVisitedLocation(context.Background(), visitedLocationPointID)
 	if err != nil {
-		logrus.Error(err.Error())
+		exloggo.Error(err.Error())
 		return err
 	}
 
@@ -132,7 +132,7 @@ func (r *AnimalPostgres) UpdateVisitedLocation(
 		ID:       visitedLocationPointID,
 	})
 	if err != nil {
-		logrus.Error(err.Error())
+		exloggo.Error(err.Error())
 		return nil, err
 	}
 
@@ -147,7 +147,7 @@ func (r *AnimalPostgres) IsLinkedVisitedLocation(animalID int64, visitedLocation
 			Animal: animalID,
 		})
 	if err != nil {
-		logrus.Error(err.Error())
+		exloggo.Error(err.Error())
 		return false, err
 	}
 
@@ -157,7 +157,7 @@ func (r *AnimalPostgres) IsLinkedVisitedLocation(animalID int64, visitedLocation
 func (r *AnimalPostgres) IsExistVisitedLocationByID(visitedLocationID int64) (bool, error) {
 	isExist, err := r.db.IsExistVisitedLocationByID(context.Background(), visitedLocationID)
 	if err != nil {
-		logrus.Error(err.Error())
+		exloggo.Error(err.Error())
 		return false, err
 	}
 
@@ -167,7 +167,7 @@ func (r *AnimalPostgres) IsExistVisitedLocationByID(visitedLocationID int64) (bo
 func (r *AnimalPostgres) IsExistByID(animalID int64) (bool, error) {
 	isExist, err := r.db.IsExistAnimalByID(context.Background(), animalID)
 	if err != nil {
-		logrus.Error(err.Error())
+		exloggo.Error(err.Error())
 		return false, err
 	}
 
@@ -177,7 +177,7 @@ func (r *AnimalPostgres) IsExistByID(animalID int64) (bool, error) {
 func (r *AnimalPostgres) GetVisitedLocations(animalID int64) ([]queries.AnimalVisitedLocation, error) {
 	points, err := r.db.GetVisitedLocations(context.Background(), animalID)
 	if err != nil {
-		logrus.Error(err.Error())
+		exloggo.Error(err.Error())
 		return nil, err
 	}
 
@@ -187,7 +187,7 @@ func (r *AnimalPostgres) GetVisitedLocations(animalID int64) ([]queries.AnimalVi
 func (r *AnimalPostgres) GetVisitedLocation(visitedPointID int64) (*queries.AnimalVisitedLocation, error) {
 	point, err := r.db.GetVisitedLocation(context.Background(), visitedPointID)
 	if err != nil {
-		logrus.Error(err.Error())
+		exloggo.Error(err.Error())
 		return nil, err
 	}
 
@@ -200,7 +200,7 @@ func (r *AnimalPostgres) CreateVisitedLocation(animalID int64, pointID int64) (*
 		Animal:   animalID,
 	})
 	if err != nil {
-		logrus.Error(err.Error())
+		exloggo.Error(err.Error())
 		return nil, err
 	}
 
@@ -210,7 +210,7 @@ func (r *AnimalPostgres) CreateVisitedLocation(animalID int64, pointID int64) (*
 func (r *AnimalPostgres) GetCurrentLocation(animalID int64) (*queries.AnimalVisitedLocation, error) {
 	point, err := r.db.GetCurrentLocation(context.Background(), animalID)
 	if err != nil {
-		logrus.Error(err.Error())
+		exloggo.Error(err.Error())
 		return nil, err
 	}
 
@@ -220,7 +220,7 @@ func (r *AnimalPostgres) GetCurrentLocation(animalID int64) (*queries.AnimalVisi
 func (r *AnimalPostgres) GetChippingLocation(animalID int64) (*queries.LocationPoint, error) {
 	point, err := r.db.GetChippingLocation(context.Background(), animalID)
 	if err != nil {
-		logrus.Error(err.Error())
+		exloggo.Error(err.Error())
 		return nil, err
 	}
 
@@ -230,7 +230,7 @@ func (r *AnimalPostgres) GetChippingLocation(animalID int64) (*queries.LocationP
 func (r *AnimalPostgres) Get(id int64) (*queries.Animal, error) {
 	animal, err := r.db.GetAnimal(context.Background(), id)
 	if err != nil {
-		logrus.Error(err.Error())
+		exloggo.Error(err.Error())
 		return nil, err
 	}
 

@@ -6,7 +6,7 @@ import (
 	"2023-it-planeta-web-api/queries"
 	"2023-it-planeta-web-api/repository"
 	"database/sql"
-	"github.com/sirupsen/logrus"
+	"github.com/execaus/exloggo"
 )
 
 type AccountService struct {
@@ -59,7 +59,7 @@ func (s *AccountService) GetList(input *models.GetAccountsInput) ([]*models.GetA
 
 	repositoryAccounts, err := s.repo.GetList(params)
 	if err != nil {
-		logrus.Error(err.Error())
+		exloggo.Error(err.Error())
 		return nil, err
 	}
 

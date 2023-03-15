@@ -3,7 +3,7 @@ package repository
 import (
 	"2023-it-planeta-web-api/queries"
 	"context"
-	"github.com/sirupsen/logrus"
+	"github.com/execaus/exloggo"
 )
 
 type LocationPostgres struct {
@@ -12,7 +12,7 @@ type LocationPostgres struct {
 
 func (r *LocationPostgres) Remove(id int64) error {
 	if _, err := r.db.RemoveLocation(context.Background(), id); err != nil {
-		logrus.Error(err.Error())
+		exloggo.Error(err.Error())
 		return err
 	}
 
@@ -22,7 +22,7 @@ func (r *LocationPostgres) Remove(id int64) error {
 func (r *LocationPostgres) IsVisitedAnimal(id int64) (bool, error) {
 	isExist, err := r.db.IsLocationVisitedAnimal(context.Background(), id)
 	if err != nil {
-		logrus.Error(err.Error())
+		exloggo.Error(err.Error())
 		return false, err
 	}
 
@@ -32,7 +32,7 @@ func (r *LocationPostgres) IsVisitedAnimal(id int64) (bool, error) {
 func (r *LocationPostgres) IsAnimalChipping(id int64) (bool, error) {
 	isExist, err := r.db.IsLocationChippingAnimal(context.Background(), id)
 	if err != nil {
-		logrus.Error(err.Error())
+		exloggo.Error(err.Error())
 		return false, err
 	}
 
@@ -42,7 +42,7 @@ func (r *LocationPostgres) IsAnimalChipping(id int64) (bool, error) {
 func (r *LocationPostgres) Update(params *queries.UpdateLocationParams) (*queries.LocationPoint, error) {
 	location, err := r.db.UpdateLocation(context.Background(), *params)
 	if err != nil {
-		logrus.Error(err.Error())
+		exloggo.Error(err.Error())
 		return nil, err
 	}
 
@@ -52,7 +52,7 @@ func (r *LocationPostgres) Update(params *queries.UpdateLocationParams) (*querie
 func (r *LocationPostgres) Create(params *queries.CreateLocationParams) (*queries.LocationPoint, error) {
 	location, err := r.db.CreateLocation(context.Background(), *params)
 	if err != nil {
-		logrus.Error(err.Error())
+		exloggo.Error(err.Error())
 		return nil, err
 	}
 
@@ -62,7 +62,7 @@ func (r *LocationPostgres) Create(params *queries.CreateLocationParams) (*querie
 func (r *LocationPostgres) IsExistByCoordinates(params *queries.IsExistLocationByCoordinatesParams) (bool, error) {
 	isExist, err := r.db.IsExistLocationByCoordinates(context.Background(), *params)
 	if err != nil {
-		logrus.Error(err.Error())
+		exloggo.Error(err.Error())
 		return false, err
 	}
 
@@ -72,7 +72,7 @@ func (r *LocationPostgres) IsExistByCoordinates(params *queries.IsExistLocationB
 func (r *LocationPostgres) IsExistByID(id int64) (bool, error) {
 	isExist, err := r.db.IsExistLocationByID(context.Background(), id)
 	if err != nil {
-		logrus.Error(err.Error())
+		exloggo.Error(err.Error())
 		return false, err
 	}
 
@@ -82,7 +82,7 @@ func (r *LocationPostgres) IsExistByID(id int64) (bool, error) {
 func (r *LocationPostgres) Get(id int64) (*queries.LocationPoint, error) {
 	location, err := r.db.GetLocation(context.Background(), id)
 	if err != nil {
-		logrus.Error(err.Error())
+		exloggo.Error(err.Error())
 		return nil, err
 	}
 
@@ -92,7 +92,7 @@ func (r *LocationPostgres) Get(id int64) (*queries.LocationPoint, error) {
 func (r *LocationPostgres) GetVisitedAnimal(id int64) ([]queries.AnimalVisitedLocation, error) {
 	points, err := r.db.GetVisitedLocationByAnimalID(context.Background(), id)
 	if err != nil {
-		logrus.Error(err.Error())
+		exloggo.Error(err.Error())
 		return nil, err
 	}
 	return points, nil

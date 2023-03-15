@@ -4,7 +4,7 @@ import (
 	"2023-it-planeta-web-api/models"
 	"2023-it-planeta-web-api/queries"
 	"context"
-	"github.com/sirupsen/logrus"
+	"github.com/execaus/exloggo"
 )
 
 type AccountPostgres struct {
@@ -14,7 +14,7 @@ type AccountPostgres struct {
 func (r *AccountPostgres) Remove(id int64) error {
 	_, err := r.db.RemoveAccount(context.Background(), id)
 	if err != nil {
-		logrus.Error(err.Error())
+		exloggo.Error(err.Error())
 		return err
 	}
 
@@ -24,7 +24,7 @@ func (r *AccountPostgres) Remove(id int64) error {
 func (r *AccountPostgres) Update(params *queries.UpdateAccountParams) (*queries.Account, error) {
 	account, err := r.db.UpdateAccount(context.Background(), *params)
 	if err != nil {
-		logrus.Error(err.Error())
+		exloggo.Error(err.Error())
 		return nil, err
 	}
 
@@ -34,7 +34,7 @@ func (r *AccountPostgres) Update(params *queries.UpdateAccountParams) (*queries.
 func (r *AccountPostgres) GetList(params *queries.GetAccountsParams) ([]queries.Account, error) {
 	accounts, err := r.db.GetAccounts(context.Background(), *params)
 	if err != nil {
-		logrus.Error(err.Error())
+		exloggo.Error(err.Error())
 		return nil, err
 	}
 
@@ -44,7 +44,7 @@ func (r *AccountPostgres) GetList(params *queries.GetAccountsParams) ([]queries.
 func (r *AccountPostgres) Get(id int64) (*queries.Account, error) {
 	account, err := r.db.GetAccount(context.Background(), id)
 	if err != nil {
-		logrus.Error(err.Error())
+		exloggo.Error(err.Error())
 		return nil, err
 	}
 
@@ -54,7 +54,7 @@ func (r *AccountPostgres) Get(id int64) (*queries.Account, error) {
 func (r *AccountPostgres) IsExistByEmail(email string) (bool, error) {
 	isExist, err := r.db.IsExistAccountByEmail(context.Background(), email)
 	if err != nil {
-		logrus.Error(err.Error())
+		exloggo.Error(err.Error())
 		return false, err
 	}
 	return isExist, nil
@@ -63,7 +63,7 @@ func (r *AccountPostgres) IsExistByEmail(email string) (bool, error) {
 func (r *AccountPostgres) IsExistByID(id int64) (bool, error) {
 	isExist, err := r.db.IsExistAccountByID(context.Background(), id)
 	if err != nil {
-		logrus.Error(err.Error())
+		exloggo.Error(err.Error())
 		return false, err
 	}
 	return isExist, nil
@@ -77,7 +77,7 @@ func (r *AccountPostgres) Registration(input *models.RegistrationAccountInput) (
 		Password:  input.Password,
 	})
 	if err != nil {
-		logrus.Error(err.Error())
+		exloggo.Error(err.Error())
 		return nil, err
 	}
 

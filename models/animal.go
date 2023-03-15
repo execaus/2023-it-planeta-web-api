@@ -2,11 +2,12 @@ package models
 
 import (
 	"2023-it-planeta-web-api/constants"
+	"2023-it-planeta-web-api/models_output"
 	"2023-it-planeta-web-api/utils"
 	"errors"
 )
 
-type GetAnimalOutput = OutputAnimal
+type GetAnimalOutput = models_output.OutputAnimal
 
 type GetAnimalsInput struct {
 	StartDateTime      *string `form:"startDateTime"`
@@ -59,7 +60,7 @@ func (i *GetAnimalsInput) Validate() error {
 	return nil
 }
 
-type GetAnimalsOutput = []*OutputAnimal
+type GetAnimalsOutput = []*models_output.OutputAnimal
 
 type CreateAnimalInput struct {
 	AnimalTypes        []*int64 `json:"animalTypes" binding:"required"`
@@ -92,7 +93,7 @@ func (i *CreateAnimalInput) Validate() error {
 	return nil
 }
 
-type CreateAnimalOutput = OutputAnimal
+type CreateAnimalOutput = models_output.OutputAnimal
 
 type UpdateAnimalInput struct {
 	Weight             float64 `json:"weight" binding:"required,min=1"`
@@ -116,13 +117,13 @@ func (i *UpdateAnimalInput) Validate() error {
 	return nil
 }
 
-type UpdateAnimalOutput = OutputAnimal
-type LinkAnimalTypeToAnimalOutput = OutputAnimal
+type UpdateAnimalOutput = models_output.OutputAnimal
+type LinkAnimalTypeToAnimalOutput = models_output.OutputAnimal
 
 type UpdateAnimalTypeToAnimalInput struct {
 	OldTypeId int64 `json:"oldTypeId" binding:"required,min=1"`
 	NewTypeId int64 `json:"newTypeId" binding:"required,min=1"`
 }
 
-type UpdateAnimalTypeToAnimalOutput = OutputAnimal
-type RemoveAnimalTypeToAnimalOutput = OutputAnimal
+type UpdateAnimalTypeToAnimalOutput = models_output.OutputAnimal
+type RemoveAnimalTypeToAnimalOutput = models_output.OutputAnimal
