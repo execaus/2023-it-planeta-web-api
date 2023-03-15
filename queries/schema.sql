@@ -49,7 +49,7 @@ CREATE TABLE "LocationPoint" (
 CREATE TABLE "AnimalToType" (
     "animal" bigint NOT NULL,
     "animal_type" bigint NOT NULL,
-    CONSTRAINT "AnimalToType_pk" PRIMARY KEY ("animal", "type")
+    CONSTRAINT "AnimalToType_pk" PRIMARY KEY ("animal", "animal_type")
 ) WITH (
   OIDS=FALSE
 );
@@ -85,7 +85,7 @@ ALTER TABLE "Animal" ADD CONSTRAINT "Animal_fk2" FOREIGN KEY ("life_status") REF
 ALTER TABLE "Animal" ADD CONSTRAINT "Animal_fk3" FOREIGN KEY ("chipper") REFERENCES "Account"("id");
 
 ALTER TABLE "AnimalToType" ADD CONSTRAINT "AnimalToType_fk0" FOREIGN KEY ("animal") REFERENCES "Animal"("id");
-ALTER TABLE "AnimalToType" ADD CONSTRAINT "AnimalToType_fk1" FOREIGN KEY ("type") REFERENCES "AnimalType"("id");
+ALTER TABLE "AnimalToType" ADD CONSTRAINT "AnimalToType_fk1" FOREIGN KEY ("animal_type") REFERENCES "AnimalType"("id");
 
 ALTER TABLE "AnimalVisitedLocation" ADD CONSTRAINT "AnimalVisitedLocation_fk0" FOREIGN KEY ("location") REFERENCES "LocationPoint"("id");
 ALTER TABLE "AnimalVisitedLocation" ADD CONSTRAINT "AnimalVisitedLocation_fk1" FOREIGN KEY ("animal") REFERENCES "Animal"("id");
