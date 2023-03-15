@@ -13,6 +13,7 @@ type Account interface {
 	GetList(params *queries.GetAccountsParams) ([]queries.Account, error)
 	Update(params *queries.UpdateAccountParams) (*queries.Account, error)
 	Remove(id int64) error
+	GetByEmail(login string) (*queries.Account, error)
 }
 
 type Animal interface {

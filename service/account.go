@@ -7,10 +7,33 @@ import (
 	"2023-it-planeta-web-api/repository"
 	"database/sql"
 	"github.com/execaus/exloggo"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type AccountService struct {
 	repo repository.Account
+}
+
+func (s *AccountService) Auth(login string, password string) (*queries.Account, error) {
+	account, err := s.repo.GetByEmail(login)
+	if err != nil {
+		return nil, err
+	}
+
+	if account == nil {
+		return nil, nil
+	}
+
+	isCompare, err := s.ComparePassword(password, account.Password)
+	if err != nil {
+		return nil, err
+	}
+
+	if isCompare {
+		return account, err
+	}
+
+	return nil, nil
 }
 
 func (s *AccountService) Remove(id int64) error {
@@ -91,6 +114,9 @@ func (s *AccountService) IsExistByID(id int64) (bool, error) {
 func (s *AccountService) Registration(
 	input *models.RegistrationAccountInput,
 ) (*models.RegistrationAccountOutput, error) {
+	passwordHash, err := s.GetHashPassword(input.Password)
+	input.Password = passwordHash
+
 	account, err := s.repo.Registration(input)
 	if err != nil {
 		return nil, err
@@ -106,4 +132,20 @@ func (s *AccountService) Registration(
 
 func NewAccountService(repo repository.Account) *AccountService {
 	return &AccountService{repo: repo}
+}
+
+func (s *AccountService) GetHashPassword(password string) (string, error) {
+	hash, err := bcrypt.GenerateFromPassword([]byte(password), 10)
+	if err != nil {
+		return "", err
+	}
+
+	return string(hash), nil
+}
+
+func (s *AccountService) ComparePassword(password string, hash string) (bool, error) {
+	if err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password)); err != nil {
+		return false, err
+	}
+	return true, nil
 }

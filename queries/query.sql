@@ -3,6 +3,11 @@ INSERT INTO "Account" (first_name, last_name, email, password, deleted)
 VALUES ($1, $2, $3, $4, false)
 RETURNING *;
 
+-- name: GetAccountByEmail :one
+SELECT *
+FROM "Account"
+WHERE email=$1;
+
 -- name: IsExistAccountByEmail :one
 SELECT EXISTS (
   SELECT 1

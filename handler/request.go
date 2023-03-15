@@ -36,3 +36,7 @@ func (h *Handler) sendForbidden(c *gin.Context) {
 func (h *Handler) sendNotFound(c *gin.Context) {
 	c.AbortWithStatus(http.StatusNotFound)
 }
+
+func (h *Handler) sendUnauthorized(c *gin.Context) {
+	c.AbortWithStatus(http.StatusUnauthorized)
+}

@@ -4,11 +4,25 @@ import (
 	"2023-it-planeta-web-api/models"
 	"2023-it-planeta-web-api/queries"
 	"context"
+	"database/sql"
 	"github.com/execaus/exloggo"
 )
 
 type AccountPostgres struct {
 	db *queries.Queries
+}
+
+func (r *AccountPostgres) GetByEmail(login string) (*queries.Account, error) {
+	account, err := r.db.GetAccountByEmail(context.Background(), login)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
+		exloggo.Error(err.Error())
+		return nil, err
+	}
+
+	return &account, nil
 }
 
 func (r *AccountPostgres) Remove(id int64) error {

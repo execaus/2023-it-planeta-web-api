@@ -148,6 +148,8 @@ func (s *AnimalService) Create(input *models.CreateAnimalInput) (*queries.Animal
 func (s *AnimalService) GetList(input *models.GetAnimalsInput) ([]queries.Animal, error) {
 	var limit int32
 	var offset int32
+	var endDateTime time.Time
+	var startDateTime time.Time
 
 	if input.Size == nil {
 		limit = constants.VisitedLocationGetListDefaultLimit
@@ -161,16 +163,22 @@ func (s *AnimalService) GetList(input *models.GetAnimalsInput) ([]queries.Animal
 		offset = *input.From
 	}
 
-	startDateTime, err := time.Parse(time.RFC3339, *input.StartDateTime)
-	if err != nil {
-		exloggo.Error(err.Error())
-		return nil, err
+	if input.StartDateTime != nil {
+		date, err := time.Parse(time.RFC3339, *input.StartDateTime)
+		if err != nil {
+			exloggo.Error(err.Error())
+			return nil, err
+		}
+		startDateTime = date
 	}
 
-	endDateTime, err := time.Parse(time.RFC3339, *input.EndDateTime)
-	if err != nil {
-		exloggo.Error(err.Error())
-		return nil, err
+	if input.EndDateTime != nil {
+		date, err := time.Parse(time.RFC3339, *input.EndDateTime)
+		if err != nil {
+			exloggo.Error(err.Error())
+			return nil, err
+		}
+		endDateTime = date
 	}
 
 	params := queries.GetAnimalsParams{

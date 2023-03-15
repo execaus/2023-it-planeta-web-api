@@ -15,6 +15,17 @@ func (h *Handler) getAnimal(c *gin.Context) {
 		return
 	}
 
+	isExistAnimal, err := h.services.Animal.IsExistByID(animalID)
+	if err != nil {
+		h.sendInternalServerError(c)
+		return
+	}
+
+	if !isExistAnimal {
+		h.sendNotFound(c)
+		return
+	}
+
 	var output models.GetAnimalOutput
 	if err = h.services.Animal.FillAnimalOutput(&output, h.services, animalID); err != nil {
 		h.sendInternalServerError(c)
@@ -43,18 +54,18 @@ func (h *Handler) getAnimals(c *gin.Context) {
 		return
 	}
 
-	var output models.GetAnimalsOutput
-	for i, animal := range animals {
+	output := make(models.GetAnimalsOutput, len(animals))
+	for _, animal := range animals {
 		var outputAnimal models_output.OutputAnimal
 		if err = h.services.Animal.FillAnimalOutput(&outputAnimal, h.services, animal.ID); err != nil {
 			h.sendInternalServerError(c)
 			return
 		}
 
-		output[i] = &outputAnimal
+		output = append(output, &outputAnimal)
 	}
 
-	h.sendOKWithBody(c, output)
+	h.sendOKWithBody(c, &output)
 }
 
 func (h *Handler) createAnimal(c *gin.Context) {

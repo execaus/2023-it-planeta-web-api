@@ -193,6 +193,26 @@ func (q *Queries) GetAccount(ctx context.Context, id int64) (Account, error) {
 	return i, err
 }
 
+const getAccountByEmail = `-- name: GetAccountByEmail :one
+SELECT id, first_name, last_name, email, password, deleted
+FROM "Account"
+WHERE email=$1
+`
+
+func (q *Queries) GetAccountByEmail(ctx context.Context, email string) (Account, error) {
+	row := q.db.QueryRowContext(ctx, getAccountByEmail, email)
+	var i Account
+	err := row.Scan(
+		&i.ID,
+		&i.FirstName,
+		&i.LastName,
+		&i.Email,
+		&i.Password,
+		&i.Deleted,
+	)
+	return i, err
+}
+
 const getAccounts = `-- name: GetAccounts :many
 SELECT id, first_name, last_name, email, password, deleted
 FROM "Account"

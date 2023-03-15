@@ -15,6 +15,7 @@ type Account interface {
 	GetList(input *models.GetAccountsInput) ([]*models.GetAccountsOutput, error)
 	Update(id int64, input *models.UpdateAccountInput) (*queries.Account, error)
 	Remove(id int64) error
+	Auth(login string, password string) (*queries.Account, error)
 }
 
 type Animal interface {
